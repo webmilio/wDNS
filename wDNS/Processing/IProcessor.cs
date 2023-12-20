@@ -1,9 +1,8 @@
 ﻿using System.Net.Sockets;
-using wDNS.Models;
 
 namespace wDNS.Processing;
 
-public interface IRequestProcessor
+public interface IProcessor
 {
     public Task ProcessAsync(UdpClient recipient, UdpReceiveResult result, CancellationToken stoppingToken);
 }

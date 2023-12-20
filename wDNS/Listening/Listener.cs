@@ -5,20 +5,23 @@ using wDNS.Processing;
 
 namespace wDNS.Listening;
 
-public class RequestListener : IRequestListener, IDisposable
+public class Listener : IListener, IDisposable
 {
-    private readonly ILogger<RequestListener> _logger;
+    private readonly ILogger<Listener> _logger;
     private readonly IOptions<Configuration.Listening> _config;
     private readonly IOptions<Configuration.SuppressWarnings> _suppressed;
 
-    private readonly IRequestProcessor _processor;
+    private readonly IProcessor _processor;
 
     private readonly UdpClient _udp;
     private bool disposedValue;
 
-    public RequestListener(ILogger<RequestListener> logger, 
+    public delegate void ReceivedDelegate(object sender, byte[] buffer);
+    public event ReceivedDelegate? Received;
+
+    public Listener(ILogger<Listener> logger,
         IOptions<Configuration.Listening> config, IOptions<Configuration.SuppressWarnings> suppressed,
-        IRequestProcessor processor)
+        IProcessor processor)
     {
         _logger = logger;
         _config = config;
@@ -54,8 +57,17 @@ public class RequestListener : IRequestListener, IDisposable
                 continue;
             }
 
-            _logger.LogDebug("Processing DNS request from {RemoteEndPoint}", local);
-            Task.Run(async () => await _processor.ProcessAsync(_udp, new UdpReceiveResult(received, local), stoppingToken), stoppingToken);
+            Received?.Invoke(this, received);
+
+            _logger.LogDebug("Processing DNS request from {Remote}", local);
+
+            var receivedResult = new UdpReceiveResult(received, local);
+
+#if SINGLETHREAD
+            _processor.ProcessAsync(_udp, receivedResult, stoppingToken).GetAwaiter().GetResult();
+#else
+            Task.Run(async () => await _processor.ProcessAsync(_udp, receivedResult, stoppingToken), stoppingToken);
+#endif
         }
     }
 

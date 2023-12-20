@@ -1,4 +1,4 @@
-﻿using wDNS.Extensions;
+﻿using wDNS.Common.Extensions;
 
 namespace wDNS.Tests.Extensions;
 

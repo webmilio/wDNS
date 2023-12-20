@@ -1,4 +1,4 @@
-﻿using wDNS.Models;
+﻿using wDNS.Common;
 
 namespace wDNS.Tests.Models;
 
@@ -25,16 +25,16 @@ public class AnswerTests
 
     private void Equal(Answer answer, string qName, QTypes qType, QClasses qClass, int ttl, int rdLength, byte[] rData)
     {
-        Assert.AreEqual(qName, answer.QName);
-        Assert.AreEqual(qType, answer.Type);
-        Assert.AreEqual(qClass, answer.Class);
+        Assert.AreEqual(qName, answer.Question.QName);
+        Assert.AreEqual(qType, answer.Question.QType);
+        Assert.AreEqual(qClass, answer.Question.QClass);
         Assert.AreEqual((uint)ttl, answer.TTL);
-        Assert.AreEqual(rdLength, answer.DataLength);
+        Assert.AreEqual(rdLength, answer.Data.Length);
         Assert.AreEqual(rData.Length, answer.Data.Length);
 
         for (int i = 0; i < rData.Length; i++)
         {
-            Assert.AreEqual(answer.Data[i], rData[i]);
+            Assert.AreEqual(answer.Data.Data[i], rData[i]);
         }
     }
 }

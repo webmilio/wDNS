@@ -1,4 +1,4 @@
-﻿namespace wDNS.Models;
+﻿namespace wDNS.Common;
 
 public interface IBufferWritable
 {

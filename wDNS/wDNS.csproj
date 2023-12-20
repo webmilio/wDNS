@@ -7,6 +7,10 @@
     <UserSecretsId>dotnet-wDNS-314c3aec-ffd7-4933-9abc-d55de4dcfb01</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);SINGLETHREAD</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
@@ -14,5 +18,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\wDNS.Common\wDNS.Common.csproj" />
   </ItemGroup>
 </Project>

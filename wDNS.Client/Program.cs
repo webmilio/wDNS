@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using wDNS.Common;
 
 namespace wDNS.Client;
 
@@ -7,7 +8,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        byte[] dnsRequest = new byte[]
+        /*byte[] dnsRequest = new byte[]
         {
             // DNS Message
             148, 99,    // Transaction ID (37987)
@@ -34,18 +35,47 @@ internal class Program
             0,          // QName Termination
             0, 1,       // QType: A
             0, 1        // QClass: IN
+        };*/
+        var dnsRequest = new byte[]
+        {
+            0x91, 0x4C, 
+            0x01, 0x00, 
+            0x00, 0x01, 
+            0x00, 0x00,
+            0x00, 0x00, 
+            0x00, 0x00, 
+            
+            0x04, 
+            0x62, 
+            0x69, 
+            0x6E,
+            0x67, 
+            0x03, 
+            0x63, 
+            0x6F, 
+            0x6D, 
+            0x00, 
+            0x00,
+            0x1C,
+            0x00, 
+            0x01
         };
 
         var dst = new IPEndPoint(IPAddress.Loopback, 53);
         using var client = new UdpClient(5566);
-        
-        client.Send(dnsRequest, dst);
-        var response = client.Receive(ref dst);
 
-        for (int i = 0; i < response.Length; i++)
+        client.Send(dnsRequest, dst);
+        var buffer = client.Receive(ref dst);
+
+        for (int i = 0; i < buffer.Length; i++)
         {
-            Console.Write("{0} ", response[i].ToString("X2"));
+            Console.Write("{0} ", buffer[i].ToString("X2"));
         }
         Console.WriteLine();
+
+        var ptr = 0;
+        var response = Response.Read(buffer, ref ptr);
+
+        Console.WriteLine(response);
     }
 }

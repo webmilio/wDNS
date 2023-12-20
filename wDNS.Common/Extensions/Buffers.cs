@@ -1,7 +1,6 @@
 ﻿using System.Text;
-using wDNS.Models;
 
-namespace wDNS.Extensions;
+namespace wDNS.Common.Extensions;
 
 public static class Buffers
 {
@@ -91,7 +90,7 @@ public static class Buffers
 
             buffer[ptr++] = (byte)str.Length;
 
-            System.Buffer.BlockCopy(str, 0, buffer, ptr, str.Length);
+            Buffer.BlockCopy(str, 0, buffer, ptr, str.Length);
             ptr += (byte)str.Length;
         }
 
@@ -110,7 +109,7 @@ public static class Buffers
 
         try
         {
-            System.Buffer.BlockCopy(buffer, ptr, read, 0, length);
+            Buffer.BlockCopy(buffer, ptr, read, 0, length);
         }
         catch (Exception ex)
         {

@@ -1,6 +1,6 @@
-﻿using wDNS.Models;
+﻿using wDNS.Common;
 
-namespace wDNS.Tests.Models;
+namespace wDNS.Tests.Common;
 
 [TestClass]
 public class QueryTests
@@ -58,7 +58,7 @@ public class QueryTests
 
         var questions = query.Questions;
 
-        Assert.AreEqual(questions.Length, message.QuestionCount);
+        Assert.AreEqual(questions.Count, message.QuestionCount);
 
         var question = questions[0];
 

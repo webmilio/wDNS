@@ -1,4 +1,4 @@
-﻿using wDNS.Models;
+﻿using wDNS.Common;
 
 namespace wDNS.Forwarding;
 

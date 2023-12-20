@@ -1,6 +1,6 @@
-using wDNS.Models;
+using wDNS.Common;
 
-namespace wDNS.Tests.Models;
+namespace wDNS.Tests.Common;
 
 [TestClass]
 public class DNSMessageTests

@@ -1,6 +1,6 @@
 ﻿namespace wDNS.Listening;
 
-public interface IRequestListener
+public interface IListener
 {
     public void Listen(CancellationToken stoppingToken);
 }

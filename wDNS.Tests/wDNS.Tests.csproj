@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\wDNS.Common\wDNS.Common.csproj" />
     <ProjectReference Include="..\wDNS\wDNS.csproj" />
   </ItemGroup>
 

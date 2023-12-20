@@ -1,6 +1,7 @@
-﻿using wDNS.Extensions;
+﻿using System.Text;
+using wDNS.Common.Extensions;
 
-namespace wDNS.Models;
+namespace wDNS.Common;
 
 public class DNSMessage : IBufferWritable
 {
@@ -42,5 +43,10 @@ public class DNSMessage : IBufferWritable
             AuthorityCount = nsCount,
             AdditionalCount = arCount,
         };
+    }
+
+    public override string ToString()
+    {
+        return $"ID: {Identification}, Flags: {Flags}, Ques./Answ./Auth./Add.: {QuestionCount}/{AnswerCount}/{AuthorityCount}/{AdditionalCount}";
     }
 }

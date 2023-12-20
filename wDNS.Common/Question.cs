@@ -1,7 +1,6 @@
-﻿
-using wDNS.Extensions;
+﻿using wDNS.Common.Extensions;
 
-namespace wDNS.Models;
+namespace wDNS.Common;
 
 public class Question : IBufferWritable
 {
@@ -29,6 +28,11 @@ public class Question : IBufferWritable
             QType = qType,
             QClass = qClass
         };
+    }
+
+    public override string ToString()
+    {
+        return $"{QType}/{QClass}: {QName}";
     }
 
     public override bool Equals(object? obj)

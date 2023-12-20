@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Sockets;
-using wDNS.Models;
+using wDNS.Common;
 
 namespace wDNS.Forwarding;
 
@@ -14,6 +14,9 @@ public class Forwarder : IForwarder, IDisposable
     private readonly IPEndPoint[] _remotes;
 
     private bool disposedValue;
+
+    public event Query.Delegate? Forwarding;
+    public event Response.FromQuestionDelegate? Received;
 
     public Forwarder(ILogger<Forwarder> logger, IOptions<Configuration.Forwarding> config)
     {
@@ -33,12 +36,20 @@ public class Forwarder : IForwarder, IDisposable
         Array.Resize(ref buffer, ptr);
 
         var remote = _remotes[0]; // TODO Change this to use multiple servers.
-        await _udp.SendAsync(buffer, remote, stoppingToken);
+        _logger.LogDebug("Forwarding request {{{Questions}}} to {Remote}.", string.Join(',', query.Questions), remote);
 
+        Forwarding?.Invoke(this, query);
+
+        await _udp.SendAsync(buffer, remote, stoppingToken);
         var received = await _udp.ReceiveAsync(stoppingToken);
-        
+
         ptr = 0;
         var response = Response.Read(received.Buffer, ref ptr);
+
+        Received?.Invoke(this, query, response);
+
+        _logger.LogDebug("Received forwarded request {{{Questions}}} response from {Remote}: {{{Answers}}}", 
+            string.Join(',', query.Questions), remote, string.Join(',', response.Answers));
 
         return response;
     }
@@ -50,14 +61,18 @@ public class Forwarder : IForwarder, IDisposable
             if (disposing)
             {
                 _udp.Dispose();
+                // TODO: dispose managed state (managed objects)
             }
 
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
             disposedValue = true;
         }
     }
 
     public void Dispose()
     {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }

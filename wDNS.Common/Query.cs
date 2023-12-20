@@ -1,11 +1,13 @@
-﻿using wDNS.Extensions;
+﻿using wDNS.Common.Extensions;
 
-namespace wDNS.Models;
+namespace wDNS.Common;
 
 public class Query : IBufferWritable
 {
+    public delegate void Delegate(object sender, Query query);
+
     public DNSMessage Message { get; set; }
-    public Question[] Questions { get; set; }
+    public IList<Question> Questions { get; set; }
 
     public void Write(byte[] buffer, ref int ptr)
     {
