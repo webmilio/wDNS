@@ -1,4 +1,5 @@
 ﻿using wDNS.Common;
+using wDNS.Common.Models;
 
 namespace wDNS.Tests.Models;
 
@@ -8,14 +9,12 @@ public class AnswerTests
     [DataTestMethod]
     [DataRow(new object[]
     {
-        new byte[] {
-            0x07, 0x65, 0x78, 0x61, 0x6D, 0x70, 0x6C, 0x65, 0x03, 0x63, 0x6F, 0x6D, 0x00, 0x00, 0x1C, 0x00, 0x01, 0x00, 0x00, 0x22, 0xB8, 0x00, 0x10, 0x20, 0x01, 0x0D, 0xB8, 0x85, 0xA3, 0x00, 0x00, 0x00, 0x00, 0x8A, 0x2E, 0x03, 0x70, 0x73, 0x34
-        },
+        new byte[] { 0x07, 0x65, 0x78, 0x61, 0x6D, 0x70, 0x6C, 0x65, 0x03, 0x63, 0x6F, 0x6D, 0x00, 0x00, 0x1C, 0x00, 0x01, 0x00, 0x00, 0x22, 0xB8, 0x00, 0x10, 0x20, 0x01, 0x0D, 0xB8, 0x85, 0xA3, 0x00, 0x00, 0x00, 0x00, 0x8A, 0x2E, 0x03, 0x70, 0x73, 0x34 },
         "example.com", QTypes.AAAA, QClasses.IN, 8888, 16,
         new byte[] { 0x20, 0x01, 0x0D, 0xB8, 0x85, 0xA3, 0x00, 0x00, 0x00, 0x00, 0x8A, 0x2E, 0x03, 0x70, 0x73, 0x34 }
     })]
 
-    public void Receive(byte[] buffer, string qName, QTypes qType, QClasses qClass, int ttl, int rdLength, byte[] rData)
+    public void Read(byte[] buffer, string qName, QTypes qType, QClasses qClass, int ttl, int rdLength, byte[] rData)
     {
         int ptr = 0;
         var answer = Answer.Read(buffer, ref ptr);
@@ -23,18 +22,44 @@ public class AnswerTests
         Equal(answer, qName, qType, qClass, ttl, rdLength, rData);
     }
 
+    [DataTestMethod]
+    [DataRow(new object[]
+    {
+        "example.com", QTypes.AAAA, QClasses.IN, 8888,
+        new byte[] { 0x20, 0x01, 0x0D, 0xB8, 0x85, 0xA3, 0x00, 0x00, 0x00, 0x00, 0x8A, 0x2E, 0x03, 0x70, 0x73, 0x34 }
+    })]
+    public void Write(string qName, QTypes qType, QClasses qClass, int ttl, byte[] rData)
+    {
+        var question = new Question
+        {
+            QName = new(qName),
+            QType = qType,
+            QClass = qClass
+        };
+
+        var data = new AnswerData(qType, (ushort)rData.Length, rData);
+
+        var answer = new Answer()
+        {
+            Question = question,
+            TTL = (uint)ttl,
+            Data = data
+        };
+
+        var buffer = Helpers.WriteBuffer(answer);
+
+        Read(buffer, qName, qType, qClass, ttl, rData.Length, rData);
+    }
+
     private void Equal(Answer answer, string qName, QTypes qType, QClasses qClass, int ttl, int rdLength, byte[] rData)
     {
-        Assert.AreEqual(qName, answer.Question.QName);
+        Assert.AreEqual(qName, answer.Question.QName.name);
         Assert.AreEqual(qType, answer.Question.QType);
         Assert.AreEqual(qClass, answer.Question.QClass);
         Assert.AreEqual((uint)ttl, answer.TTL);
         Assert.AreEqual(rdLength, answer.Data.Length);
         Assert.AreEqual(rData.Length, answer.Data.Length);
 
-        for (int i = 0; i < rData.Length; i++)
-        {
-            Assert.AreEqual(answer.Data.Data[i], rData[i]);
-        }
+        CollectionAssert.AreEqual(rData, answer.Data.Data);
     }
 }

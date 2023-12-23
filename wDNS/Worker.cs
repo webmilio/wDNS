@@ -13,11 +13,13 @@ public class Worker : BackgroundService
         _listener = listener;
     }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         _logger.LogInformation("Starting listener.");
 
-#if SINGLE_THREAD
+#if SINGLETHREAD
         _listener.Listen(stoppingToken);
 #else
         new Thread(() => _listener.Listen(stoppingToken)).Start();

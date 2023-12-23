@@ -8,6 +8,12 @@ public class Forwarding
 
     public string[] Remotes { get; set; }
 
+    public int Timeout { get; set; }
+
+    public bool PrintQueryBytesOnReceiveError { get; set; }
+    public bool PrintResponseBytesOnReceive { get; set; }
+    public bool PrintResponseBytesOnReceiveError { get; set; }
+
     public IPEndPoint[] GetRemotes()
     {
         var remotes = new IPEndPoint[Remotes.Length];

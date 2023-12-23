@@ -33,68 +33,12 @@ public static class Buffers
     public static uint ReadUInt32(this byte[] buffer, ref int ptr)
     {
         var x = (uint)(buffer[ptr++] << 24);
+        
         x |= (uint)(buffer[ptr++] << 16);
         x |= (uint)(buffer[ptr++] << 8);
         x |= buffer[ptr++];
 
         return x;
-    }
-
-    public static string ReadLabel(this byte[] buffer, ref int ptr)
-    {
-        const byte maxSegmentLength = 63;
-        const byte maxLabelLength = 255;
-
-        var label = new StringBuilder(maxLabelLength);
-        int localPtr = buffer.GetLabelPointer(ref ptr); ;
-
-        while (localPtr < buffer.Length && buffer[localPtr] != 0)
-        {
-            ushort wordLength = (ushort)(buffer[localPtr++] & maxSegmentLength);
-
-            var wordEnd = localPtr + wordLength;
-            for (; localPtr < wordEnd; localPtr++)
-            {
-                label.Append((char)buffer[localPtr]);
-            }
-
-            if (localPtr + 1 < buffer.Length && buffer[localPtr + 1] != 0)
-            {
-                label.Append('.');
-            }
-        }
-
-        ptr = localPtr > ptr ? localPtr : ptr;
-        ptr++;
-
-        return label.ToString();
-    }
-
-    public static int GetLabelPointer(this byte[] buffer, ref int ptr)
-    {
-        if (buffer[ptr] == 0b11000000)
-        {
-            return buffer[++ptr];
-        }
-
-        return ptr;
-    }
-
-    public static void WriteLabel(this byte[] buffer, string label, ref int ptr)
-    {
-        var split = label.Split('.');
-
-        for (int i = 0; i < split.Length; i++)
-        {
-            var str = Encoding.ASCII.GetBytes(split[i]);
-
-            buffer[ptr++] = (byte)str.Length;
-
-            Buffer.BlockCopy(str, 0, buffer, ptr, str.Length);
-            ptr += (byte)str.Length;
-        }
-
-        buffer[ptr++] = 0;
     }
 
     public static void WriteArray(this byte[] buffer, byte[] array, ref int ptr)
@@ -106,15 +50,7 @@ public static class Buffers
     public static byte[] ReadArray(this byte[] buffer, int length, ref int ptr)
     {
         var read = new byte[length];
-
-        try
-        {
-            Buffer.BlockCopy(buffer, ptr, read, 0, length);
-        }
-        catch (Exception ex)
-        {
-            return new byte[length];
-        }
+        Buffer.BlockCopy(buffer, ptr, read, 0, length);
 
         ptr += length;
         return read;
@@ -139,5 +75,19 @@ public static class Buffers
         {
             items[i].Write(buffer, ref ptr);
         }
+    }
+
+    public static string ToX2String(this byte[] buffer) => ToX2String(buffer, 0, buffer.Length);
+
+    public static string ToX2String(this byte[] buffer, int index, int length)
+    {
+        var sb = new StringBuilder();
+
+        for (var i = index; i < length; i++)
+        {
+            sb.AppendFormat("{0} ", buffer[i].ToString("x2"));
+        }
+
+        return sb.ToString();
     }
 }

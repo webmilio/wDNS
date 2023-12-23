@@ -1,7 +1,10 @@
-﻿using System.Net.Sockets;
+﻿using Microsoft.Extensions.Options;
+using System.Net.Sockets;
 using System.Text;
 using wDNS.Caching;
 using wDNS.Common;
+using wDNS.Common.Extensions;
+using wDNS.Common.Models;
 using wDNS.Forwarding;
 
 namespace wDNS.Processing;
@@ -11,13 +14,24 @@ public class Processor : IProcessor
     private readonly ILogger<Processor> _logger;
     private readonly IForwarder _forwarder;
     private readonly IAnswerCache _cachedAnswers;
+    private readonly IOptions<Configuration.Processing> _config;
+    private bool disposedValue;
 
-    public Processor(ILogger<Processor> logger,
+    public event Query.OnReadDelegate QueryRead;
+
+    public Processor(ILogger<Processor> logger, IOptions<Configuration.Processing> config, 
         IForwarder forwarder, IAnswerCache cachedAnswers)
     {
         _logger = logger;
+        _config = config;
+
         _forwarder = forwarder;
         _cachedAnswers = cachedAnswers;
+
+        if (_config.Value.PrintBytesOnReceive)
+        {
+            QueryRead += Processor_QueryReadLogEnabled;
+        }
     }
 
     public async Task ProcessAsync(UdpClient recipient, UdpReceiveResult result, CancellationToken stoppingToken)
@@ -27,17 +41,8 @@ public class Processor : IProcessor
         var buffer = result.Buffer;
         var query = Query.Read(buffer, ref ptr);
 
-        if (_logger.IsEnabled(LogLevel.Trace))
-        {
-            var sb = new StringBuilder(buffer.Length);
-
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                sb.AppendFormat("{0} ", buffer[i].ToString("X2"));
-            }
-
-            _logger.LogTrace("Request {{{Questions}}} bytes: {Bytes}", string.Join<Question>(',', query.Questions), sb);
-        }
+        _logger.LogDebug("Read query {{{Query}}}", query);
+        QueryRead?.Invoke(this, buffer, ptr, query);
 
         var compiled = new List<Answer>(2);
         Response response;
@@ -53,10 +58,11 @@ public class Processor : IProcessor
             }
             else
             {
-                _logger.LogDebug("No answer found for question {{{Question}}}.", question);
+                _logger.LogDebug("No answer found for question {{{Question}}}", question);
                 response = await _forwarder.ForwardAsync(query, stoppingToken);
 
-                _logger.LogDebug("Caching answers {{{Answers}}} for question {{{Question}}}.", string.Join(',', response.Answers), question);
+                _logger.LogDebug("Caching answers {{{Answers}}} for question {{{Question}}}", 
+                    Helpers.Concatenate(response.Answers), question);
                 _cachedAnswers.Add(question, response.Answers);
 
                 compiled.AddRange(response.Answers);
@@ -74,14 +80,15 @@ public class Processor : IProcessor
 
         response.Message.AnswerCount = (ushort)compiled.Count;
 
-        _logger.LogDebug("Replying to request ID {Identification} with response {Response}", response.Message.Identification, response);
+        _logger.LogDebug("Replying to request #{dentification} with response {Response}", response.Message.Identification, response);
 
-        ptr = 0;
-        buffer = new byte[Constants.UdpPacketMaxLength];
-        response.Write(buffer, ref ptr);
-
-        Array.Resize(ref buffer, ptr);
-
+        buffer = Helpers.WriteBuffer(response);
         await recipient.SendAsync(buffer, result.RemoteEndPoint, stoppingToken);        
+    }
+
+    private void Processor_QueryReadLogEnabled(object sender, byte[] buffer, int length, Query query)
+    {
+        _logger.LogDebug("Read query #{Identification}'s buffer:\n{Buffer}",
+            query.Message.Identification, buffer.ToX2String(0, length));
     }
 }

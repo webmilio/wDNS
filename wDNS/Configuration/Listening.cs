@@ -9,5 +9,7 @@ public class Listening
     internal IPAddress _IPAddress => System.Net.IPAddress.Parse(IPAddress);
 
     public int Port { get; set; } = 53;
+
+    public bool PrintBytesOnReceive { get; set; }
 }
 #pragma warning restore IDE1006 // Naming Styles

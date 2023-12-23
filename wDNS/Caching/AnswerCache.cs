@@ -1,5 +1,5 @@
-﻿using wDNS.Common;
-using wDNS.Common.Extensions;
+﻿using wDNS.Common.Extensions;
+using wDNS.Common.Models;
 
 namespace wDNS.Caching;
 

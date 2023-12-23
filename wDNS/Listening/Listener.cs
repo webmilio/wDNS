@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Net;
 using wDNS.Processing;
+using wDNS.Common.Extensions;
 
 namespace wDNS.Listening;
 
@@ -30,6 +31,11 @@ public class Listener : IListener, IDisposable
         _processor = processor;
 
         _udp = new UdpClient(_config.Value.Port);
+
+        if (_config.Value.PrintBytesOnReceive)
+        {
+            Received += Listener_ReceivedLogEnabled;
+        }
     }
 
     public void Listen(CancellationToken stoppingToken)
@@ -71,15 +77,20 @@ public class Listener : IListener, IDisposable
         }
     }
 
+    private void Listener_ReceivedLogEnabled(object sender, byte[] buffer)
+    {
+        _logger.LogDebug("Received request with bytes\n{Buffer}", buffer.ToX2String());
+    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)
         {
             if (disposing)
             {
-                _udp.Dispose();
                 // TODO: dispose managed state (managed objects)
-            }
+                _udp.Dispose();
+             }
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null

@@ -1,4 +1,5 @@
 using wDNS.Common;
+using wDNS.Common.Models;
 
 namespace wDNS.Tests.Common;
 
@@ -15,7 +16,7 @@ public class DNSMessageTests
     public void Receive(byte[] buffer, MessageFlags flags, int identification, int questionCount, int answerCount, int authorityCount, int additionalCount)
     {
         int ptr = 0;
-        var message = DNSMessage.Read(buffer, ref ptr);
+        var message = DnsMessage.Read(buffer, ref ptr);
 
         Equal(message, flags, identification, questionCount, answerCount, authorityCount, additionalCount);
     }
@@ -31,7 +32,7 @@ public class DNSMessageTests
         var buffer = new byte[Constants.UdpPacketMaxLength];
         int ptr = 0;
 
-        var message = new DNSMessage()
+        var message = new DnsMessage()
         {
             Identification = (ushort)identification,
             Flags = flags,
@@ -46,12 +47,12 @@ public class DNSMessageTests
         Array.Resize(ref buffer, ptr);
 
         ptr = 0;
-        var message2 = DNSMessage.Read(buffer, ref ptr);
+        var message2 = DnsMessage.Read(buffer, ref ptr);
 
         Equal(message2, flags, identification, questionCount, answerCount, authorityCount, additionalCount);
     }
 
-    private static void Equal(DNSMessage message, MessageFlags flags, int identification, int questionCount, int answerCount, int authorityCount, int additionalCount)
+    private static void Equal(DnsMessage message, MessageFlags flags, int identification, int questionCount, int answerCount, int authorityCount, int additionalCount)
     {
         Assert.AreEqual(identification, message.Identification);
         Assert.AreEqual((ushort)flags, (ushort)message.Flags);

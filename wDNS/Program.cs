@@ -18,8 +18,9 @@ public class Program
             .AddSingleton<IForwarder, Forwarder>()
 
             .AddSingleton<IAnswerCache, AnswerCache>()
-            
+
             .Configure<Configuration.Listening>(o => builder.Configuration.GetSection(nameof(Configuration.Listening)).Bind(o))
+            .Configure<Configuration.Processing>(o => builder.Configuration.GetSection(nameof(Configuration.Processing)).Bind(o))
             .Configure<Configuration.Forwarding>(o => builder.Configuration.GetSection(nameof(Configuration.Forwarding)).Bind(o))
             .Configure<Configuration.SuppressWarnings>(o => builder.Configuration.GetSection(nameof(Configuration.SuppressWarnings)).Bind(o));
 

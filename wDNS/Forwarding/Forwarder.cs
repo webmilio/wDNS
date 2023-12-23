@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using wDNS.Common;
+using wDNS.Common.Extensions;
+using wDNS.Common.Models;
 
 namespace wDNS.Forwarding;
 
@@ -15,8 +17,11 @@ public class Forwarder : IForwarder, IDisposable
 
     private bool disposedValue;
 
+    public delegate void ReceivedDelegate(object sender, Query src, byte[] buffer);
+    public event ReceivedDelegate Received;
+
     public event Query.Delegate? Forwarding;
-    public event Response.FromQuestionDelegate? Received;
+    public event Response.FromQuestionDelegate? Read;
 
     public Forwarder(ILogger<Forwarder> logger, IOptions<Configuration.Forwarding> config)
     {
@@ -25,33 +30,95 @@ public class Forwarder : IForwarder, IDisposable
 
         _udp = new UdpClient(_config.Value.Port);
         _remotes = _config.Value.GetRemotes();
+
+        if (_config.Value.PrintResponseBytesOnReceive)
+        {
+            Received += Forwarder_ReceivedLogEnabled;
+        }
     }
 
     public async Task<Response> ForwardAsync(Query query, CancellationToken stoppingToken)
     {
-        int ptr = 0;
-        var buffer = new byte[255];
+        const string DisabledInConfig = "Disabled in config"; // Disabled in configuration file.
 
-        query.Write(buffer, ref ptr);
-        Array.Resize(ref buffer, ptr);
+        if (_config.Value.Timeout > 0)
+        {
+            var cancelSource = new CancellationTokenSource();
+            stoppingToken.Register(cancelSource.Cancel);
+
+            cancelSource.CancelAfter(_config.Value.Timeout);
+            stoppingToken = cancelSource.Token;
+        }
+
+        var buffer = Helpers.WriteBuffer(query);
 
         var remote = _remotes[0]; // TODO Change this to use multiple servers.
-        _logger.LogDebug("Forwarding request {{{Questions}}} to {Remote}.", string.Join(',', query.Questions), remote);
+        _logger.LogDebug("Forwarding request #{Identification} to {Remote}", query.Message.Identification, remote);
 
         Forwarding?.Invoke(this, query);
 
-        await _udp.SendAsync(buffer, remote, stoppingToken);
-        var received = await _udp.ReceiveAsync(stoppingToken);
+        try
+        {
+            await _udp.SendAsync(buffer, remote, stoppingToken);
+        }
+        catch (TaskCanceledException)
+        {
+            _logger.LogError("Timeout encountered while forwarding request #{Identification} to {Remote}", 
+                query.Message.Identification, remote);
+            throw;
+        }
 
-        ptr = 0;
-        var response = Response.Read(received.Buffer, ref ptr);
+        UdpReceiveResult received;
+        try
+        {
+            received = await _udp.ReceiveAsync(stoppingToken);
+        }
+        catch (TaskCanceledException)
+        {
+            _logger.LogError("Timeout encountered while received forwarded request #{Identification} to {Remote}",
+                query.Message.Identification, remote);
+            throw;
+        }
 
-        Received?.Invoke(this, query, response);
+        Received?.Invoke(this, query, received.Buffer);
 
-        _logger.LogDebug("Received forwarded request {{{Questions}}} response from {Remote}: {{{Answers}}}", 
-            string.Join(',', query.Questions), remote, string.Join(',', response.Answers));
+        int ptr = 0;
+        Response response;
+
+        try
+        {
+            response = Response.Read(received.Buffer, ref ptr);
+        }
+        catch (Exception ex)
+        {
+            var conf = _config.Value;
+            var sQuery = DisabledInConfig;
+            
+            if (conf.PrintQueryBytesOnReceiveError)
+            {
+                var mBuffer = Helpers.WriteBuffer(query);
+                sQuery = mBuffer.ToX2String();
+            }
+
+            _logger.LogError(ex, "Error while reading forwarded query #{Identification} response." +
+                "\n\tQuery Buffer: {QueryBuffer}\n\tResponse Buffer: {Response}",
+                query.Message.Identification, sQuery, 
+                conf.PrintResponseBytesOnReceiveError ? received.Buffer.ToX2String() : DisabledInConfig);
+            throw;
+        }
+
+        Read?.Invoke(this, query, received.Buffer, response);
+
+        _logger.LogDebug("Received forwarded request {{{Questions}}} response from {Remote}: {Response}",
+            string.Join(',', query.Questions), remote, response);
 
         return response;
+    }
+
+    private void Forwarder_ReceivedLogEnabled(object sender, Query src, byte[] buffer)
+    {
+        _logger.LogDebug("Received forwarded query #{Identification} response buffer:\n{Buffer}\nLength of {Length}",
+            src.Message.Identification, buffer.ToX2String(), buffer.Length);
     }
 
     protected virtual void Dispose(bool disposing)
@@ -61,18 +128,14 @@ public class Forwarder : IForwarder, IDisposable
             if (disposing)
             {
                 _udp.Dispose();
-                // TODO: dispose managed state (managed objects)
             }
 
-            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-            // TODO: set large fields to null
             disposedValue = true;
         }
     }
 
     public void Dispose()
     {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }

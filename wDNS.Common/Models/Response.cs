@@ -1,13 +1,13 @@
 ﻿using System.Text;
 using wDNS.Common.Extensions;
 
-namespace wDNS.Common;
+namespace wDNS.Common.Models;
 
-public class Response : IBufferWritable
+public class Response : IBufferWritable, IBufferReadable<Response>
 {
-    public delegate void FromQuestionDelegate(object sender, Query src, Response result);
+    public delegate void FromQuestionDelegate(object sender, Query src, byte[] buffer, Response result);
 
-    public DNSMessage Message { get; set; }
+    public DnsMessage Message { get; set; }
     public IList<Question> Questions { get; set; }
     public IList<Answer> Answers { get; set; }
     public object[] Authorities { get; set; }
@@ -22,7 +22,7 @@ public class Response : IBufferWritable
 
     public static Response Read(byte[] buffer, ref int ptr)
     {
-        var message = DNSMessage.Read(buffer, ref ptr);
+        var message = DnsMessage.Read(buffer, ref ptr);
         var questions = buffer.ReadMany(Question.Read, message.QuestionCount, ref ptr);
         var answers = buffer.ReadMany(Answer.Read, message.AnswerCount, ref ptr);
         var authorities = new object[message.AuthorityCount];
@@ -43,34 +43,19 @@ public class Response : IBufferWritable
         var sb = new StringBuilder();
 
         sb.AppendLine($"Message: {Message}");
-        
+
         sb.Append("Questions: ");
-        Concatenate(sb, Questions);
+        Helpers.Concatenate(sb, Questions);
 
         sb.Append("Answers: ");
-        Concatenate(sb, Answers);
+        Helpers.Concatenate(sb, Answers);
 
         sb.Append("Authorities: ");
-        Concatenate(sb, Authorities);
+        Helpers.Concatenate(sb, Authorities);
 
         sb.Append("Additional: ");
-        Concatenate(sb, Additional);
+        Helpers.Concatenate(sb, Additional);
 
         return sb.ToString();
-    }
-
-    private static void Concatenate<T>(StringBuilder sb, IList<T> children)
-    {
-        for (int i = 0; i < children.Count; i++)
-        {
-            sb.Append(children[i]);
-            
-            if (i + 1 < children.Count)
-            {
-                sb.Append(", ");
-            }
-        }
-
-        sb.AppendLine();
     }
 }

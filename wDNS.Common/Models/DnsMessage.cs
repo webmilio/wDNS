@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using wDNS.Common.Extensions;
 
-namespace wDNS.Common;
+namespace wDNS.Common.Models;
 
-public class DNSMessage : IBufferWritable
+public class DnsMessage : IBufferWritable
 {
     public ushort Identification { get; set; }
     public MessageFlags Flags { get; set; }
@@ -23,7 +23,7 @@ public class DNSMessage : IBufferWritable
         buffer.WriteUInt16(AdditionalCount, ref ptr);
     }
 
-    public static DNSMessage Read(byte[] buffer, ref int ptr)
+    public static DnsMessage Read(byte[] buffer, ref int ptr)
     {
         var identification = buffer.ReadUInt16(ref ptr);
         var flags = (MessageFlags)buffer.ReadUInt16(ref ptr);

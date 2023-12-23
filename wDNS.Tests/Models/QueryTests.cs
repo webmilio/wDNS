@@ -1,4 +1,5 @@
 ﻿using wDNS.Common;
+using wDNS.Common.Models;
 
 namespace wDNS.Tests.Common;
 
@@ -62,7 +63,7 @@ public class QueryTests
 
         var question = questions[0];
 
-        Assert.AreEqual(qName, question.QName);
+        Assert.AreEqual(qName, question.QName.name);
         Assert.AreEqual(qType, question.QType);
         Assert.AreEqual(qClass, question.QClass);
     }

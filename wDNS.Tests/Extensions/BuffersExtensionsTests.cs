@@ -1,4 +1,5 @@
 ﻿using wDNS.Common.Extensions;
+using wDNS.Common.Models;
 
 namespace wDNS.Tests.Extensions;
 
@@ -24,7 +25,7 @@ public class BuffersExtensionsTests
     public void ReadLabel(byte[] buffer, string expected)
     {
         int ptr = 0;
-        var label = Buffers.ReadLabel(buffer, ref ptr);
+        var label = DnsName.Read(buffer, ref ptr);
 
         Assert.AreEqual(expected, label);
     }
@@ -36,23 +37,26 @@ public class BuffersExtensionsTests
         var buffer = new byte[Constants.UdpPacketMaxLength];
         int ptr = 0;
 
-        Buffers.WriteLabel(buffer, expected, ref ptr);
+        var name = new DnsName(expected);
+        name.Write(buffer, ref ptr);
+
         Assert.AreEqual(10, ptr);
 
         Array.Resize(ref buffer, ptr);
         ptr = 0;
 
-        var label = Buffers.ReadLabel(buffer, ref ptr);
+        var label = DnsName.Read(buffer, ref ptr);
         Assert.AreEqual(expected, label);
     }
 
     [DataTestMethod]
     [DataRow(new object[] { new byte[] { 0xC0, 0x0C }, 12 })]
+    [DataRow(new object[] { new byte[] { 0b1111_1101, 0b1011_1111 }, 0b0011_1101_1011_1111 })]
     [DataRow(new object[] { new byte[] { 0x00, 0x0C }, 0 })]
     public void GetLabelPtr(byte[] buffer, int expected)
     {
         int ptr = 0;
-        ptr = buffer.GetLabelPointer(ref ptr);
+        ptr = DnsName.GetLabelPointer(buffer, ref ptr);
 
         Assert.AreEqual(expected, ptr);
     }

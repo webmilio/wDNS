@@ -1,8 +1,8 @@
 ﻿using wDNS.Common.Extensions;
 
-namespace wDNS.Common;
+namespace wDNS.Common.Models;
 
-public class Answer : IBufferWritable
+public class Answer : IBufferWritable, IBufferReadable<Answer>
 {
     public Question Question { get; init; }
     public uint TTL { get; set; }
@@ -33,6 +33,6 @@ public class Answer : IBufferWritable
 
     public override string ToString()
     {
-        return $"TTL: {TTL}, {Data}";
+        return $"TTL: {TTL} {Data}";
     }
 }
