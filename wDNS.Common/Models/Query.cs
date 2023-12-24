@@ -4,29 +4,29 @@ using wDNS.Common.Helpers;
 
 namespace wDNS.Common.Models;
 
-public class Query : IBufferWritable, IBufferReadable<Query>
+public struct Query : IBufferWritable, IBufferReadable<Query>
 {
     public delegate void Delegate(object sender, Query query);
-    public delegate void OnReadDelegate(object sender, byte[] buffer, int length, Query query);
+    public delegate void OnReadDelegate(object sender, byte[] buffer, Query query);
 
-    public DnsMessage Message { get; set; }
-    public IList<Question> Questions { get; set; }
+    public DnsMessage message;
+    public IList<Question> questions;
 
     public void Write(byte[] buffer, ref int ptr)
     {
-        Message.Write(buffer, ref ptr);
-        Questions.Write(buffer, ref ptr);
+        message.Write(buffer, ref ptr);
+        questions.Write(buffer, ref ptr);
     }
 
     public static Query Read(byte[] buffer, ref int ptr)
     {
         var message = DnsMessage.Read(buffer, ref ptr);
-        var questions = buffer.ReadMany(Question.Read, message.QuestionCount, ref ptr);
+        var questions = buffer.ReadMany(Question.Read, message.questionCount, ref ptr);
 
         return new()
         {
-            Message = message,
-            Questions = questions
+            message = message,
+            questions = questions
         };
     }
 
@@ -34,10 +34,10 @@ public class Query : IBufferWritable, IBufferReadable<Query>
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine($"Message: {Message}");
+        sb.AppendLine($"Message: {message}");
 
         sb.Append("Questions: ");
-        StringHelpers.Concatenate(sb, Questions);
+        StringHelpers.Concatenate(sb, questions);
 
         return sb.ToString();
     }

@@ -11,14 +11,14 @@ public class QuestionTests
     [DataRow(new object[]
     {
         new byte[] { 0x04, 0x62, 0x69, 0x6E, 0x67, 0x03, 0x63, 0x6F, 0x6D, 0x00, 0x00, 0x01, 0x00, 0x01 },
-        "bing.com", QTypes.A, QClasses.IN
+        "bing.com", RecordTypes.A, RecordClasses.IN
     })]
     [DataRow(new object[]
     {
         new byte[] { 0x04, 0x6D, 0x61, 0x70, 0x73, 0x04, 0x62, 0x69, 0x6E, 0x67, 0x03, 0x63, 0x6F, 0x6D, 0x00, 0x00, 0x01, 0x00, 0x01 },
-        "maps.bing.com", QTypes.A, QClasses.IN
+        "maps.bing.com", RecordTypes.A, RecordClasses.IN
     })]
-    public void Read(byte[] buffer, string qName, QTypes qType, QClasses qClass)
+    public void Read(byte[] buffer, string qName, RecordTypes qType, RecordClasses qClass)
     {
         int ptr = 0;
 
@@ -27,8 +27,8 @@ public class QuestionTests
     }
 
     [DataTestMethod]
-    [DataRow(new object[] { "bing.com", QTypes.AAAA, QClasses.CH })]
-    public void Write(string qName, QTypes qType, QClasses qClass)
+    [DataRow(new object[] { "bing.com", RecordTypes.AAAA, RecordClasses.CH })]
+    public void Write(string qName, RecordTypes qType, RecordClasses qClass)
     {
         var buffer = new byte[Constants.MaxLabelsTotalLength];
         int ptr = 0;
@@ -49,10 +49,10 @@ public class QuestionTests
     }
 
     [DataTestMethod]
-    [DataRow("bing.com", QTypes.A, QClasses.IN)]
-    public void Equals(string qName, QTypes qType, QClasses qClass)
+    [DataRow("bing.com", RecordTypes.A, RecordClasses.IN)]
+    public void Equals(string qName, RecordTypes qType, RecordClasses qClass)
     {
-        Question Make(string qName, QTypes qType, QClasses qClass)
+        Question Make(string qName, RecordTypes qType, RecordClasses qClass)
         {
             return new()
             {
@@ -81,7 +81,7 @@ public class QuestionTests
         CollectionAssert.AreEqual(buffer, newBuffer);
     }
 
-    private static void Equal(Question question, string qName, QTypes qType, QClasses qClass)
+    private static void Equal(Question question, string qName, RecordTypes qType, RecordClasses qClass)
     {
         Assert.AreEqual(qName, question.QName.name);
         Assert.AreEqual(qType, question.QType);

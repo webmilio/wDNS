@@ -77,7 +77,7 @@ public static class Buffers
         }
     }
 
-    public static string ToX2String(this byte[] buffer) => ToX2String(buffer, 0, buffer.Length);
+    public static string Tox2String(this byte[] buffer) => ToX2String(buffer, 0, buffer.Length);
 
     public static string ToX2String(this byte[] buffer, int index, int length)
     {

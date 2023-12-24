@@ -53,7 +53,7 @@ public class Forwarder : IForwarder, IDisposable
         var buffer = BufferHelpers.WriteBuffer(query);
 
         var remote = _remotes[0]; // TODO Change this to use multiple servers.
-        _logger.LogDebug("Forwarding request #{Identification} to {Remote}", query.Message.Identification, remote);
+        _logger.LogDebug("Forwarding request #{Identification} to {Remote}", query.message.identification, remote);
 
         Forwarding?.Invoke(this, query);
 
@@ -64,7 +64,7 @@ public class Forwarder : IForwarder, IDisposable
         catch (TaskCanceledException)
         {
             _logger.LogError("Timeout encountered while forwarding request #{Identification} to {Remote}", 
-                query.Message.Identification, remote);
+                query.message.identification, remote);
             throw;
         }
 
@@ -76,7 +76,7 @@ public class Forwarder : IForwarder, IDisposable
         catch (TaskCanceledException)
         {
             _logger.LogError("Timeout encountered while received forwarded request #{Identification} to {Remote}",
-                query.Message.Identification, remote);
+                query.message.identification, remote);
             throw;
         }
 
@@ -97,20 +97,20 @@ public class Forwarder : IForwarder, IDisposable
             if (conf.PrintQueryBytesOnReceiveError)
             {
                 var mBuffer = BufferHelpers.WriteBuffer(query);
-                sQuery = mBuffer.ToX2String();
+                sQuery = mBuffer.Tox2String();
             }
 
             _logger.LogError(ex, "Error while reading forwarded query #{Identification} response." +
                 "\n\tQuery Buffer: {QueryBuffer}\n\tResponse Buffer: {Response}",
-                query.Message.Identification, sQuery, 
-                conf.PrintResponseBytesOnReceiveError ? received.Buffer.ToX2String() : DisabledInConfig);
+                query.message.identification, sQuery, 
+                conf.PrintResponseBytesOnReceiveError ? received.Buffer.Tox2String() : DisabledInConfig);
             throw;
         }
 
         Read?.Invoke(this, query, received.Buffer, response);
 
         _logger.LogDebug("Received forwarded request {{{Questions}}} response from {Remote}: {Response}",
-            string.Join(',', query.Questions), remote, response);
+            string.Join(',', query.questions), remote, response);
 
         return response;
     }
@@ -118,7 +118,7 @@ public class Forwarder : IForwarder, IDisposable
     private void Forwarder_ReceivedLogEnabled(object sender, Query src, byte[] buffer)
     {
         _logger.LogDebug("Received forwarded query #{Identification} response buffer:\n{Buffer}\nLength of {Length}",
-            src.Message.Identification, buffer.ToX2String(), buffer.Length);
+            src.message.identification, buffer.Tox2String(), buffer.Length);
     }
 
     protected virtual void Dispose(bool disposing)

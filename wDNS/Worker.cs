@@ -19,11 +19,9 @@ public class Worker : BackgroundService
         _hosts = hosts;
     }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
-        _logger.LogInformation("Starting listener.");
+        _logger.LogInformation("Starting listener");
         _logger.LogInformation("Configuring");
 
         await ReadConfigurations();
@@ -45,7 +43,8 @@ public class Worker : BackgroundService
         _logger.LogInformation("Reading {{conf}} directory");
 
 #if DEBUG
-        Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        _logger.LogDebug("Set current directory to {{{CurrentDirectory}}}", Environment.CurrentDirectory);
 #endif
 
         var confDir = new DirectoryInfo("conf");

@@ -1,26 +1,50 @@
-﻿using System.Text;
+﻿using System.Runtime.CompilerServices;
 using wDNS.Common.Extensions;
 
 namespace wDNS.Common.Models;
 
-public class DnsMessage : IBufferWritable, IBufferReadable<DnsMessage>
+public struct DnsMessage : IBufferWritable, IBufferReadable<DnsMessage>
 {
-    public ushort Identification { get; set; }
-    public MessageFlags Flags { get; set; }
-    public ushort QuestionCount { get; set; }
-    public ushort AnswerCount { get; set; }
-    public ushort AuthorityCount { get; set; }
-    public ushort AdditionalCount { get; set; }
+    public ushort identification;
+    public MessageFlags flags;
+    public ushort questionCount;
+    public ushort answerCount;
+    public ushort authorityCount;
+    public ushort additionalCount;
+
+    public bool Response
+    {
+        readonly get => flags.HasFlag(MessageFlags.Query_Response);
+        set => MessageFlagsHelpers.SetFlag(ref flags, MessageFlags.Query_Response, value);
+    }
+
+    public bool Truncated
+    {
+        readonly get => flags.HasFlag(MessageFlags.Truncation_Truncated);
+        set => MessageFlagsHelpers.SetFlag(ref flags, MessageFlags.Truncation_Truncated, value);
+    }
+
+    public bool RecursionDesired
+    {
+        readonly get => flags.HasFlag(MessageFlags.RecursionDesired_Desired);
+        set => MessageFlagsHelpers.SetFlag(ref flags, MessageFlags.RecursionDesired_Desired, value);
+    }
+
+    public bool RecursionSupported
+    {
+        readonly get => flags.HasFlag(MessageFlags.RecursionAvailable_Supported);
+        set => MessageFlagsHelpers.SetFlag(ref flags, MessageFlags.RecursionAvailable_Supported, value);
+    }
 
     public void Write(byte[] buffer, ref int ptr)
     {
-        buffer.WriteUInt16(Identification, ref ptr);
-        buffer.WriteUInt16((ushort)Flags, ref ptr);
+        buffer.WriteUInt16(identification, ref ptr);
+        buffer.WriteUInt16((ushort)flags, ref ptr);
 
-        buffer.WriteUInt16(QuestionCount, ref ptr);
-        buffer.WriteUInt16(AnswerCount, ref ptr);
-        buffer.WriteUInt16(AuthorityCount, ref ptr);
-        buffer.WriteUInt16(AdditionalCount, ref ptr);
+        buffer.WriteUInt16(questionCount, ref ptr);
+        buffer.WriteUInt16(answerCount, ref ptr);
+        buffer.WriteUInt16(authorityCount, ref ptr);
+        buffer.WriteUInt16(additionalCount, ref ptr);
     }
 
     public static DnsMessage Read(byte[] buffer, ref int ptr)
@@ -35,18 +59,18 @@ public class DnsMessage : IBufferWritable, IBufferReadable<DnsMessage>
 
         return new()
         {
-            Identification = identification,
-            Flags = flags,
+            identification = identification,
+            flags = flags,
 
-            QuestionCount = qdCount,
-            AnswerCount = anCount,
-            AuthorityCount = nsCount,
-            AdditionalCount = arCount,
+            questionCount = qdCount,
+            answerCount = anCount,
+            authorityCount = nsCount,
+            additionalCount = arCount,
         };
     }
 
     public override string ToString()
     {
-        return $"ID: {Identification}, Flags: {Flags}, Ques./Answ./Auth./Add.: {QuestionCount}/{AnswerCount}/{AuthorityCount}/{AdditionalCount}";
+        return $"ID: {identification}, Flags: {flags}, Ques./Answ./Auth./Add.: {questionCount}/{answerCount}/{authorityCount}/{additionalCount}";
     }
 }

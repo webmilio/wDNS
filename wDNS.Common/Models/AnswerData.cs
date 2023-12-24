@@ -3,15 +3,32 @@ using wDNS.Common.Extensions;
 
 namespace wDNS.Common.Models;
 
-public record AnswerData(QTypes QType, ushort Length, byte[] Data, object? VisualRepresentation = null) : IBufferWritable
+public struct AnswerData : IBufferWritable
 {
-    public void Write(byte[] buffer, ref int ptr)
-    {
-        buffer.WriteUInt16(Length, ref ptr);
-        buffer.WriteArray(Data, ref ptr);
+    public readonly RecordTypes type;
+    public readonly ushort length;
+    public readonly byte[] data;
+    public object? visual;
+
+    public AnswerData(RecordTypes type, ushort length, byte[] data) : this(type, length, data, null)
+    {   
     }
 
-    public static AnswerData Read(QTypes qType, byte[] buffer, ref int ptr)
+    public AnswerData(RecordTypes type, ushort length, byte[] data, object? visual)
+    {
+        this.type = type;
+        this.length = length;
+        this.data = data;
+        this.visual = visual;
+    }
+
+    public void Write(byte[] buffer, ref int ptr)
+    {
+        buffer.WriteUInt16(length, ref ptr);
+        buffer.WriteArray(data, ref ptr);
+    }
+
+    public static AnswerData Read(RecordTypes qType, byte[] buffer, ref int ptr)
     {
         var length = buffer.ReadUInt16(ref ptr);
 
@@ -22,11 +39,11 @@ public record AnswerData(QTypes QType, ushort Length, byte[] Data, object? Visua
 
         switch (qType)
         {
-            case QTypes.A:
-            case QTypes.AAAA:
+            case RecordTypes.A:
+            case RecordTypes.AAAA:
                 visualRepresentation = new IPAddress(data);
                 break;
-            case QTypes.CNAME:
+            case RecordTypes.CNAME:
                 visualRepresentation = DnsName.Read(buffer, ref mPtr);
                 break;
             default:
@@ -39,6 +56,6 @@ public record AnswerData(QTypes QType, ushort Length, byte[] Data, object? Visua
 
     public override string ToString()
     {
-        return $"{QType}: {VisualRepresentation}";
+        return $"{type}: {visual}";
     }
 }

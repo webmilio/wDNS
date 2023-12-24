@@ -4,5 +4,11 @@ namespace wDNS.Common;
 
 public interface IQuestionable
 {
-    public bool TryAnswer(Question question, out IList<Answer>? answers);
+    public bool PopulateAnswers(Question question, QuestionResult result);
+}
+
+public class QuestionResult
+{
+    public MessageFlags Flags { get; set; }
+    public List<Answer> Answers { get; } = [];
 }

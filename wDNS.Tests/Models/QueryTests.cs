@@ -38,28 +38,28 @@ public class QueryTests
             0, 1        // QClass: IN
         },
         37987, 0x0100, 0x0001, 0x0000, 0x0000, 0x0001,
-        "example.com", QTypes.A, QClasses.IN
+        "example.com", RecordTypes.A, RecordClasses.IN
     })]
     public void Read(byte[] buffer,
         int id, int flags, int qdCount, int anCount, int nsCount, int arCount,
-        string qName, QTypes qType, QClasses qClass)
+        string qName, RecordTypes qType, RecordClasses qClass)
     {
         int ptr = 0;
         var query = Query.Read(buffer, ref ptr);
 
-        var message = query.Message;
+        var message = query.message;
 
-        Assert.AreEqual(id, message.Identification);
-        Assert.AreEqual((ushort)flags, (ushort)message.Flags);
-        Assert.AreEqual((ushort)flags, (ushort)message.Flags);
-        Assert.AreEqual((ushort)qdCount, message.QuestionCount);
-        Assert.AreEqual((ushort)anCount, message.AnswerCount);
-        Assert.AreEqual((ushort)nsCount, message.AuthorityCount);
-        Assert.AreEqual((ushort)arCount, message.AdditionalCount);
+        Assert.AreEqual(id, message.identification);
+        Assert.AreEqual((ushort)flags, (ushort)message.flags);
+        Assert.AreEqual((ushort)flags, (ushort)message.flags);
+        Assert.AreEqual((ushort)qdCount, message.questionCount);
+        Assert.AreEqual((ushort)anCount, message.answerCount);
+        Assert.AreEqual((ushort)nsCount, message.authorityCount);
+        Assert.AreEqual((ushort)arCount, message.additionalCount);
 
-        var questions = query.Questions;
+        var questions = query.questions;
 
-        Assert.AreEqual(questions.Count, message.QuestionCount);
+        Assert.AreEqual(questions.Count, message.questionCount);
 
         var question = questions[0];
 
@@ -100,11 +100,11 @@ public class QueryTests
             0, 1        // QClass: IN
         },
         37987, 0x0100, 0x0001, 0x0000, 0x0000, 0x0001,
-        "example.com", QTypes.A, QClasses.IN
+        "example.com", RecordTypes.A, RecordClasses.IN
     })]
     public void Write(byte[] buffer,
         int id, int flags, int qdCount, int anCount, int nsCount, int arCount,
-        string qName, QTypes qType, QClasses qClass)
+        string qName, RecordTypes qType, RecordClasses qClass)
     {
         int ptr = 0;
         var query = Query.Read(buffer, ref ptr);

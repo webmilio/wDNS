@@ -20,18 +20,15 @@ public class KnowledgeProvider : IKnowledgeProvider
         _sources.Insert(0, source);
     }
 
-    public bool TryAnswer(Question question, out IList<Answer>? answers)
+    public bool PopulateAnswers(Question question, QuestionResult result)
     {
-        answers = null;
+        bool found = false;
 
         for (int i = 0; i < _sources.Count; i++)
         {
-            if (_sources[i].TryAnswer(question, out answers))
-            {
-                return true;
-            }
+            found |= _sources[i].PopulateAnswers(question, result);
         }
 
-        return false;
+        return found;
     }
 }

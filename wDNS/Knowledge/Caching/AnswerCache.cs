@@ -1,4 +1,5 @@
-﻿using wDNS.Common.Extensions;
+﻿using wDNS.Common;
+using wDNS.Common.Extensions;
 using wDNS.Common.Models;
 
 namespace wDNS.Knowledge.Caching;
@@ -19,21 +20,16 @@ public class AnswerCache : IAnswerCache
         _logger = logger;
     }
 
-    public bool TryAnswer(Question question, out IList<Answer> answers)
+    public bool PopulateAnswers(Question question, QuestionResult result)
     {
-        answers = null;
-
         lock (_lock)
         {
-            if (!_questions.TryGetValue(question, out var mAnswers))
+            if (!_questions.TryGetValue(question, out var answers))
             {
                 return false;
             }
 
-            var xAnswers = new Answer[mAnswers.Count];
-            mAnswers.CopyTo(xAnswers);
-
-            answers = xAnswers;
+            result.Answers.AddRange(answers);
         }
 
         return true;
@@ -43,13 +39,13 @@ public class AnswerCache : IAnswerCache
     {
         foreach (var kvp in _questions)
         {
-            foreach (var answer in kvp.Value)
-            {
-                answer.TTL--;
+            var answers = kvp.Value;
 
-                if (answer.TTL <= 0)
+            for (int i = 0; i < answers.Count; i++)
+            {
+                if (answers[i].ttl <= answers[i].TickTTL())
                 {
-                    _decache.Add(new(kvp.Key, answer));
+                    _decache.Add(new(kvp.Key, answers[i]));
                 }
             }
         }

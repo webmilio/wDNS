@@ -4,58 +4,61 @@ using wDNS.Common.Helpers;
 
 namespace wDNS.Common.Models;
 
-public class Response : IBufferWritable, IBufferReadable<Response>
+public struct Response : IBufferWritable, IBufferReadable<Response>
 {
     public delegate void FromQuestionDelegate(object sender, Query src, byte[] buffer, Response result);
 
-    public DnsMessage Message { get; set; }
-    public IList<Question> Questions { get; set; }
-    public IList<Answer> Answers { get; set; }
-    public object[] Authorities { get; set; }
-    public object[] Additional { get; set; }
+    public Query query;
+    public IList<Answer> answers;
+    public object[] authorities;
+    public object[] additional;
+
+    public Response(Query query, IList<Answer> answers, object[] authorities, object[] additional)
+    {
+        this.query = query;
+        this.answers = answers;
+        this.authorities = authorities;
+        this.additional = additional;
+    }
 
     public void Write(byte[] buffer, ref int ptr)
     {
-        Message.Write(buffer, ref ptr);
-        Questions.Write(buffer, ref ptr);
-        Answers.Write(buffer, ref ptr);
+        query.Write(buffer, ref ptr);
+        answers.Write(buffer, ref ptr);
     }
 
     public static Response Read(byte[] buffer, ref int ptr)
     {
-        var message = DnsMessage.Read(buffer, ref ptr);
-        var questions = buffer.ReadMany(Question.Read, message.QuestionCount, ref ptr);
-        var answers = buffer.ReadMany(Answer.Read, message.AnswerCount, ref ptr);
-        var authorities = new object[message.AuthorityCount];
-        var additional = new object[message.AdditionalCount];
+        var query = Query.Read(buffer, ref ptr);
+        var answers = buffer.ReadMany(Answer.Read, query.message.answerCount, ref ptr);
+        var authorities = new object[query.message.authorityCount];
+        var additional = new object[query.message.additionalCount];
 
-        return new()
-        {
-            Message = message,
-            Questions = questions,
-            Answers = answers,
-            Authorities = authorities,
-            Additional = additional
-        };
+        return new(query, answers, authorities, additional);
     }
 
     public override string ToString()
     {
+        const string spacer = "\n\t";
         var sb = new StringBuilder();
 
-        sb.AppendLine($"Message: {Message}");
+        sb.AppendLine($"Message: {query.message}");
 
         sb.Append("Questions: ");
-        StringHelpers.Concatenate(sb, Questions);
+        StringHelpers.Concatenate(sb, query.questions);
+        sb.Append(spacer);
 
         sb.Append("Answers: ");
-        StringHelpers.Concatenate(sb, Answers);
+        StringHelpers.Concatenate(sb, answers);
+        sb.Append(spacer);
 
         sb.Append("Authorities: ");
-        StringHelpers.Concatenate(sb, Authorities);
+        StringHelpers.Concatenate(sb, authorities);
+        sb.Append(spacer);
 
         sb.Append("Additional: ");
-        StringHelpers.Concatenate(sb, Additional);
+        StringHelpers.Concatenate(sb, additional);
+        sb.Append(spacer);
 
         return sb.ToString();
     }

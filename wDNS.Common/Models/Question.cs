@@ -5,8 +5,8 @@ namespace wDNS.Common.Models;
 public class Question : IBufferWritable, IBufferReadable<Question>
 {
     public DnsName QName { get; set; }
-    public QTypes QType { get; set; }
-    public QClasses QClass { get; set; }
+    public RecordTypes QType { get; set; }
+    public RecordClasses QClass { get; set; }
 
     public void Write(byte[] buffer, ref int ptr)
     {
@@ -19,8 +19,8 @@ public class Question : IBufferWritable, IBufferReadable<Question>
     {
         var label = DnsName.Read(buffer, ref ptr);
 
-        var qType = (QTypes)buffer.ReadUInt16(ref ptr);
-        var qClass = (QClasses)buffer.ReadUInt16(ref ptr);
+        var qType = (RecordTypes)buffer.ReadUInt16(ref ptr);
+        var qClass = (RecordClasses)buffer.ReadUInt16(ref ptr);
 
         return new()
         {

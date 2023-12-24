@@ -34,13 +34,13 @@ public class DNSMessageTests
 
         var message = new DnsMessage()
         {
-            Identification = (ushort)identification,
-            Flags = flags,
+            identification = (ushort)identification,
+            flags = flags,
 
-            QuestionCount = (ushort)questionCount,
-            AnswerCount = (ushort)answerCount,
-            AuthorityCount = (ushort)authorityCount,
-            AdditionalCount = (ushort)additionalCount
+            questionCount = (ushort)questionCount,
+            answerCount = (ushort)answerCount,
+            authorityCount = (ushort)authorityCount,
+            additionalCount = (ushort)additionalCount
         };
 
         message.Write(buffer, ref ptr);
@@ -54,11 +54,11 @@ public class DNSMessageTests
 
     private static void Equal(DnsMessage message, MessageFlags flags, int identification, int questionCount, int answerCount, int authorityCount, int additionalCount)
     {
-        Assert.AreEqual(identification, message.Identification);
-        Assert.AreEqual((ushort)flags, (ushort)message.Flags);
-        Assert.AreEqual(questionCount, message.QuestionCount);
-        Assert.AreEqual(answerCount, message.AnswerCount);
-        Assert.AreEqual(authorityCount, message.AuthorityCount);
-        Assert.AreEqual(additionalCount, message.AdditionalCount);
+        Assert.AreEqual(identification, message.identification);
+        Assert.AreEqual((ushort)flags, (ushort)message.flags);
+        Assert.AreEqual(questionCount, message.questionCount);
+        Assert.AreEqual(answerCount, message.answerCount);
+        Assert.AreEqual(authorityCount, message.authorityCount);
+        Assert.AreEqual(additionalCount, message.additionalCount);
     }
 }

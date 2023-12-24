@@ -86,7 +86,7 @@ public class Listener : IListener, IDisposable
 
     private void Listener_ReceivedLogEnabled(object sender, byte[] buffer)
     {
-        _logger.LogDebug("Received request with bytes\n{Buffer}", buffer.ToX2String());
+        _logger.LogDebug("Received request with bytes\n{Buffer}", buffer.Tox2String());
     }
 
     protected virtual void Dispose(bool disposing)

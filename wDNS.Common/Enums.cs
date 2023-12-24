@@ -1,4 +1,6 @@
-﻿namespace wDNS.Common;
+﻿using System.Runtime.CompilerServices;
+
+namespace wDNS.Common;
 
 /// <summary>
 /// Needs a Query, Opcode, Authoritative, Truncation, RecursionDesired, RecursionAvailable, ResponseCode
@@ -36,7 +38,22 @@ public enum MessageFlags : ushort
     ResponseCode_Refused = 0b0000000000000101
 }
 
-public enum QTypes : ushort
+public class MessageFlagsHelpers
+{
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SetFlag(ref MessageFlags flags, MessageFlags flag, bool value)
+    {
+        SetFlag(ref flags, flag, ~flag, value);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SetFlag(ref MessageFlags flags, MessageFlags trueFlag, MessageFlags falseMask, bool value)
+    {
+        flags = value ? (flags | trueFlag) : flags & falseMask;
+    }
+}
+
+public enum RecordTypes : ushort
 {
     A = 1,
     NS = 2,
@@ -56,7 +73,7 @@ public enum QTypes : ushort
     SRV = 33
 }
 
-public enum QClasses : ushort
+public enum RecordClasses : ushort
 {
     IN = 1,
     CS = 2,

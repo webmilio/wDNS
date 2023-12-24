@@ -62,7 +62,7 @@ public class HostFile : IQuestionable
                     continue;
                 }
                 
-                var answers = hosts.Answers.GetOrProvide(answer.Question, _ => new());
+                var answers = hosts.Answers.GetOrProvide(answer.question, _ => new());
 
                 answers.Add(answer);
             }
@@ -77,13 +77,13 @@ public class HostFile : IQuestionable
 
         var address = NetworkHelpers.ParseIPAddress(s[0]);
 
-        var qType = address.AddressFamily == AddressFamily.InterNetworkV6 ? QTypes.AAAA : QTypes.A;
+        var qType = address.AddressFamily == AddressFamily.InterNetworkV6 ? RecordTypes.AAAA : RecordTypes.A;
 
         var question = ParseQuestion(s[1], qType, options);
         return ParseAnswer(address, qType, question, options);
     }
 
-    private static Question ParseQuestion(string segment, QTypes qType, SerializationOptions options)
+    private static Question ParseQuestion(string segment, RecordTypes qType, SerializationOptions options)
     {
         var dnsName = new DnsName(segment);
         return new Question
@@ -94,28 +94,27 @@ public class HostFile : IQuestionable
             QType = qType,
 
             // TODO: Same as above, but I know nothing of the other classes.
-            QClass = QClasses.IN
+            QClass = RecordClasses.IN
         };
     }
 
-    private static Answer ParseAnswer(IPAddress address, QTypes qType, Question question, SerializationOptions options)
+    private static Answer ParseAnswer(IPAddress address, RecordTypes qType, Question question, SerializationOptions options)
     {
         var bytes = address.GetAddressBytes();
 
-        return new Answer
-        {
-            Question = question,
-            TTL = (uint)options.DefaultTTL,
-            Data = new(qType, (ushort)bytes.Length, bytes, address)
-        };
+        var data = new AnswerData(qType, (ushort)bytes.Length, bytes, address);
+        return new Answer(question, data, (uint)options.DefaultTTL);
     }
 
-    public bool TryAnswer(Question question, out IList<Answer>? answers)
+    public bool PopulateAnswers(Question question, QuestionResult result)
     {
-        var result = Answers.TryGetValue(question, out var mAnswers);
-        answers = mAnswers;
+        if (Answers.TryGetValue(question, out var answers))
+        {
+            result.Answers.AddRange(answers);
+            return true;
+        }
 
-        return result;
+        return false;
     }
 
     public class SerializationOptions

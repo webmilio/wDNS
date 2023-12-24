@@ -52,15 +52,15 @@ public class ResponseTests
             
 /*b54*/     0xCC, 0x4F, 0xC5, 0xC8
         },
-        "bing.com", QTypes.AAAA, QClasses.IN, 1422, 16,
+        "bing.com", RecordTypes.AAAA, RecordClasses.IN, 1422, 16,
         new byte[] { 0x26, 0x20, 0x01, 0xEC, 0x0C, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00 }
     })]
-    public void Receive(byte[] buffer, string qName, QTypes qType, QClasses qClass, int ttl, int rdLength, byte[] rData)
+    public void Receive(byte[] buffer, string qName, RecordTypes qType, RecordClasses qClass, int ttl, int rdLength, byte[] rData)
     {
         int ptr = 0;
         var response = Response.Read(buffer, ref ptr);
 
-        Equal(response.Answers[0], qName, qType, qClass, ttl, rdLength, rData);
+        Equal(response.answers[0], qName, qType, qClass, ttl, rdLength, rData);
     }
 
     [DataTestMethod]
@@ -140,10 +140,10 @@ public class ResponseTests
         int ptr = 0;
         var response = Response.Read(buffer, ref ptr);
 
-        Assert.AreEqual(QuestionCount, response.Questions.Count);
-        Assert.AreEqual(QName, response.Questions[0].QName.name);
+        Assert.AreEqual(QuestionCount, response.query.questions.Count);
+        Assert.AreEqual(QName, response.query.questions[0].QName.name);
 
-        Assert.AreEqual(AnswerCount, response.Answers.Count);
+        Assert.AreEqual(AnswerCount, response.answers.Count);
 
         ptr = 52;
         var cnameLabel = DnsName.Read(buffer, ref ptr);
@@ -151,28 +151,28 @@ public class ResponseTests
         Assert.AreEqual("audio-ak-spotify-com.akamaized.net", cnameLabel);
 
         int qPtr = 0;
-        Assert.AreEqual(QTypes.CNAME, response.Answers[qPtr].Question.QType);
-        Assert.AreEqual(QClasses.IN, response.Answers[qPtr++].Question.QClass);
+        Assert.AreEqual(RecordTypes.CNAME, response.answers[qPtr].question.QType);
+        Assert.AreEqual(RecordClasses.IN, response.answers[qPtr++].question.QClass);
 
-        for (; qPtr < response.Answers.Count; qPtr++)
+        for (; qPtr < response.answers.Count; qPtr++)
         {
-            Assert.AreEqual(QTypes.A, response.Answers[qPtr].Question.QType);
-            Assert.AreEqual(QClasses.IN, response.Answers[qPtr].Question.QClass);
+            Assert.AreEqual(RecordTypes.A, response.answers[qPtr].question.QType);
+            Assert.AreEqual(RecordClasses.IN, response.answers[qPtr].question.QClass);
         }
     }
 
-    private void Equal(Answer answer, string qName, QTypes qType, QClasses qClass, int ttl, int rdLength, byte[] rData)
+    private void Equal(Answer answer, string qName, RecordTypes qType, RecordClasses qClass, int ttl, int rdLength, byte[] rData)
     {
-        Assert.AreEqual(qName, answer.Question.QName.name);
-        Assert.AreEqual(qType, answer.Question.QType);
-        Assert.AreEqual(qClass, answer.Question.QClass);
-        Assert.AreEqual((uint)ttl, answer.TTL);
-        Assert.AreEqual(rdLength, answer.Data.Length);
-        Assert.AreEqual(rData.Length, answer.Data.Length);
+        Assert.AreEqual(qName, answer.question.QName.name);
+        Assert.AreEqual(qType, answer.question.QType);
+        Assert.AreEqual(qClass, answer.question.QClass);
+        Assert.AreEqual((uint)ttl, answer.ttl);
+        Assert.AreEqual(rdLength, answer.data.length);
+        Assert.AreEqual(rData.Length, answer.data.length);
 
         for (int i = 0; i < rData.Length; i++)
         {
-            Assert.AreEqual(answer.Data.Data[i], rData[i]);
+            Assert.AreEqual(answer.data.data[i], rData[i]);
         }
     }
 
