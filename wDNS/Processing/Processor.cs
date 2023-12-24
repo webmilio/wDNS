@@ -17,8 +17,6 @@ public class Processor : IProcessor
     private readonly IForwarder _forwarder;
     private readonly IKnowledgeProvider _knowledge;
     private readonly IAnswerCache _cache;
-    
-    private bool disposedValue;
 
     public event Query.OnReadDelegate QueryRead;
 
@@ -86,10 +84,19 @@ public class Processor : IProcessor
         response.Message.Flags |= Common.MessageFlags.Query_Response;
         response.Message.AnswerCount = (ushort)compiled.Count;
 
-        _logger.LogDebug("Replying to request #{dentification} with response {Response}", response.Message.Identification, response);
+        _logger.LogDebug("Replying to request #{Identification} with response {Response}", response.Message.Identification, response);
 
         buffer = BufferHelpers.WriteBuffer(response);
-        await recipient.SendAsync(buffer, result.RemoteEndPoint, stoppingToken);        
+
+        try
+        {
+            await recipient.SendAsync(buffer, result.RemoteEndPoint, stoppingToken);
+        }
+        catch (Exception ex)
+        {
+            var message = string.Format("Error while replying to query #{0}. Buffer:\n{1}", query.Message.Identification, buffer);
+            throw new Exception(message, ex);
+        }
     }
 
     private void Processor_QueryReadLogEnabled(object sender, byte[] buffer, int length, Query query)

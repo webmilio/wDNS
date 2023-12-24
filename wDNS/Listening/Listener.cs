@@ -69,11 +69,18 @@ public class Listener : IListener, IDisposable
 
             var receivedResult = new UdpReceiveResult(received, local);
 
+            try
+            {
 #if SINGLETHREAD
-            _processor.ProcessAsync(_udp, receivedResult, stoppingToken).GetAwaiter().GetResult();
+                _processor.ProcessAsync(_udp, receivedResult, stoppingToken).GetAwaiter().GetResult();
 #else
-            Task.Run(async () => await _processor.ProcessAsync(_udp, receivedResult, stoppingToken), stoppingToken);
+                Task.Run(async () => await _processor.ProcessAsync(_udp, receivedResult, stoppingToken), stoppingToken);
 #endif
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while processing request");
+            }
         }
     }
 
