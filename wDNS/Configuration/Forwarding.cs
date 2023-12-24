@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using wDNS.Common.Helpers;
 
 namespace wDNS.Configuration;
 
@@ -22,7 +23,7 @@ public class Forwarding
         {
             var parts = Remotes[i].Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             
-            var address = IPAddress.Parse(parts[0]);
+            var address = NetworkHelpers.ParseIPAddress(parts[0]);
             var port = 53;
 
             if (parts.Length > 1)

@@ -29,7 +29,7 @@ public class DNSMessageTests
     })]
     public void Send(MessageFlags flags, int identification, int questionCount, int answerCount, int authorityCount, int additionalCount)
     {
-        var buffer = new byte[Constants.UdpPacketMaxLength];
+        var buffer = new byte[Constants.MaxLabelsTotalLength];
         int ptr = 0;
 
         var message = new DnsMessage()

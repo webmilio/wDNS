@@ -1,4 +1,5 @@
-﻿using wDNS.Common.Extensions;
+﻿using wDNS.Common;
+using wDNS.Common.Extensions;
 using wDNS.Common.Models;
 
 namespace wDNS.Tests.Extensions;
@@ -34,7 +35,7 @@ public class BuffersExtensionsTests
     [DataRow(new object[] { "bing.com" })]
     public void WriteLabel(string expected)
     {
-        var buffer = new byte[Constants.UdpPacketMaxLength];
+        var buffer = new byte[Constants.MaxLabelsTotalLength];
         int ptr = 0;
 
         var name = new DnsName(expected);

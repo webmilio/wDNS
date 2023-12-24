@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using wDNS.Common.Helpers;
 
 namespace wDNS.Configuration;
 
@@ -6,7 +7,7 @@ namespace wDNS.Configuration;
 public class Listening
 {
     public string IPAddress { get; set; }
-    internal IPAddress _IPAddress => System.Net.IPAddress.Parse(IPAddress);
+    internal IPAddress _IPAddress => NetworkHelpers.ParseIPAddress(IPAddress);
 
     public int Port { get; set; } = 53;
 

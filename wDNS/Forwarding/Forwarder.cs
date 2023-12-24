@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Sockets;
-using wDNS.Common;
 using wDNS.Common.Extensions;
+using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 
 namespace wDNS.Forwarding;
@@ -50,7 +50,7 @@ public class Forwarder : IForwarder, IDisposable
             stoppingToken = cancelSource.Token;
         }
 
-        var buffer = Helpers.WriteBuffer(query);
+        var buffer = BufferHelpers.WriteBuffer(query);
 
         var remote = _remotes[0]; // TODO Change this to use multiple servers.
         _logger.LogDebug("Forwarding request #{Identification} to {Remote}", query.Message.Identification, remote);
@@ -96,7 +96,7 @@ public class Forwarder : IForwarder, IDisposable
             
             if (conf.PrintQueryBytesOnReceiveError)
             {
-                var mBuffer = Helpers.WriteBuffer(query);
+                var mBuffer = Common.Helpers.BufferHelpers.WriteBuffer(query);
                 sQuery = mBuffer.ToX2String();
             }
 

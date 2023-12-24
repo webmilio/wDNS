@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using wDNS.Common;
 using wDNS.Common.Extensions;
+using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 
 namespace wDNS.Knowledge;
@@ -74,7 +75,7 @@ public class HostFile : IQuestionable
     {
         var s = line.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-        var address = IPAddress.Parse(s[0]);
+        var address = NetworkHelpers.ParseIPAddress(s[0]);
 
         var qType = address.AddressFamily == AddressFamily.InterNetworkV6 ? QTypes.AAAA : QTypes.A;
 

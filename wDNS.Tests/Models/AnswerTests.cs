@@ -1,4 +1,5 @@
 ﻿using wDNS.Common;
+using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 
 namespace wDNS.Tests.Models;
@@ -46,7 +47,7 @@ public class AnswerTests
             Data = data
         };
 
-        var buffer = Helpers.WriteBuffer(answer);
+        var buffer = wDNS.Common.Helpers.BufferHelpers.WriteBuffer(answer);
 
         Read(buffer, qName, qType, qClass, ttl, rData.Length, rData);
     }

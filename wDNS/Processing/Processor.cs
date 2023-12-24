@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Sockets;
-using wDNS.Common;
 using wDNS.Common.Extensions;
+using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 using wDNS.Forwarding;
 using wDNS.Knowledge;
@@ -67,7 +67,7 @@ public class Processor : IProcessor
 
                 _logger.LogInformation("Caching answers for question {{{Question}}}", question);
                 _logger.LogDebug("Caching answers {{{Answers}}} for question {{{Question}}}", 
-                    Helpers.Concatenate(response.Answers), question);
+                    StringHelpers.Concatenate(response.Answers), question);
 
                 _cache.Add(question, response.Answers);
                 compiled.AddRange(response.Answers);
@@ -87,7 +87,7 @@ public class Processor : IProcessor
 
         _logger.LogDebug("Replying to request #{dentification} with response {Response}", response.Message.Identification, response);
 
-        buffer = Helpers.WriteBuffer(response);
+        buffer = Common.Helpers.BufferHelpers.WriteBuffer(response);
         await recipient.SendAsync(buffer, result.RemoteEndPoint, stoppingToken);        
     }
 

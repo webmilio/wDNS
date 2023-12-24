@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace wDNS.Common;
+namespace wDNS.Common.Helpers;
 
-public class Helpers
+public class StringHelpers
 {
     public static void Concatenate<T>(StringBuilder sb, IList<T> children)
     {
@@ -25,24 +25,5 @@ public class Helpers
         Concatenate(sb, children);
 
         return sb.ToString();
-    }
-
-    public static byte[] WriteBuffer(IBufferWritable obj)
-    {
-        int ptr = 0;
-        var buffer = new byte[Constants.MaxUdpSize];
-
-        obj.Write(buffer, ref ptr);
-        Array.Resize(ref buffer, ptr);
-
-        return buffer;
-    }
-
-    public static T ReadBuffer<T>(byte[] buffer, int startIndex = 0) where T : IBufferReadable<T>
-    {
-        int ptr = startIndex;
-        var obj = T.Read(buffer, ref ptr);
-
-        return obj;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using wDNS.Common.Extensions;
+using wDNS.Common.Helpers;
 
 namespace wDNS.Common.Models;
 
@@ -45,16 +46,16 @@ public class Response : IBufferWritable, IBufferReadable<Response>
         sb.AppendLine($"Message: {Message}");
 
         sb.Append("Questions: ");
-        Helpers.Concatenate(sb, Questions);
+        StringHelpers.Concatenate(sb, Questions);
 
         sb.Append("Answers: ");
-        Helpers.Concatenate(sb, Answers);
+        StringHelpers.Concatenate(sb, Answers);
 
         sb.Append("Authorities: ");
-        Helpers.Concatenate(sb, Authorities);
+        StringHelpers.Concatenate(sb, Authorities);
 
         sb.Append("Additional: ");
-        Helpers.Concatenate(sb, Additional);
+        StringHelpers.Concatenate(sb, Additional);
 
         return sb.ToString();
     }

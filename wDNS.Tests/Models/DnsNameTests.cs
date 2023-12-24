@@ -1,4 +1,4 @@
-﻿using wDNS.Common;
+﻿using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 
 namespace wDNS.Tests.Models;
@@ -20,7 +20,7 @@ public class DnsNameTests
     }, DisplayName = "Pointer")]
     public void ReadBufferCompareData(byte[] buffer, int startIndex = 0, byte[]? expected = null)
     {
-        var dnsName = Helpers.ReadUdpBuffer<DnsName>(buffer, startIndex);
+        var dnsName = BufferHelpers.ReadBuffer<DnsName>(buffer, startIndex);
         CollectionAssert.AreEqual(expected ?? buffer, dnsName.data);
     }
 
@@ -37,7 +37,7 @@ public class DnsNameTests
     }, DisplayName = "Pointer")]
     public void ReadBufferCompareName(byte[] buffer, int startIndex, string expected)
     {
-        var dnsName = Helpers.ReadUdpBuffer<DnsName>(buffer, startIndex);
+        var dnsName = BufferHelpers.ReadBuffer<DnsName>(buffer, startIndex);
         Assert.AreEqual(expected, dnsName);
     }
 
@@ -46,7 +46,7 @@ public class DnsNameTests
     public void WriteNameCompareData(string name, byte[] expected)
     {
         var dnsName = new DnsName(name);
-        var buffer = Helpers.WriteBuffer(dnsName);
+        var buffer = wDNS.Common.Helpers.BufferHelpers.WriteBuffer(dnsName);
 
         CollectionAssert.AreEqual(expected, buffer);
     }

@@ -1,4 +1,5 @@
 ﻿using wDNS.Common;
+using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 
 namespace wDNS.Tests.Common;
@@ -29,7 +30,7 @@ public class QuestionTests
     [DataRow(new object[] { "bing.com", QTypes.AAAA, QClasses.CH })]
     public void Write(string qName, QTypes qType, QClasses qClass)
     {
-        var buffer = new byte[Constants.UdpPacketMaxLength];
+        var buffer = new byte[Constants.MaxLabelsTotalLength];
         int ptr = 0;
 
         var question = new Question()
@@ -74,7 +75,7 @@ public class QuestionTests
     {
         int ptr = 0;
         var question = Question.Read(buffer, ref ptr);
-        var newBuffer = Helpers.WriteBuffer(question);
+        var newBuffer = wDNS.Common.Helpers.BufferHelpers.WriteBuffer(question);
 
         Assert.AreEqual(buffer.Length, newBuffer.Length);
         CollectionAssert.AreEqual(buffer, newBuffer);
