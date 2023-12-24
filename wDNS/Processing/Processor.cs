@@ -94,14 +94,13 @@ public class Processor : IProcessor
         }
         catch (Exception ex)
         {
-            var message = string.Format("Error while replying to query #{0}. Buffer:\n{1}", query.Message.Identification, buffer);
+            var message = string.Format("Error while replying to query #{0}. Buffer: {1}", query.Message.Identification, buffer.ToX2String());
             throw new Exception(message, ex);
         }
     }
 
     private void Processor_QueryReadLogEnabled(object sender, byte[] buffer, int length, Query query)
     {
-        _logger.LogDebug("Read query #{Identification}'s buffer:\n{Buffer}",
-            query.Message.Identification, buffer.ToX2String(0, length));
+        _logger.LogDebug("Read query #{Identification}'s buffer:\n{Buffer}", query.Message.Identification, buffer.ToX2String(0, length));
     }
 }
