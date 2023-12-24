@@ -2,7 +2,6 @@
 
 public static class BufferHelpers
 {
-
     public static T ReadBuffer<T>(byte[] buffer, int startIndex = 0) where T : IBufferReadable<T>
     {
         int ptr = startIndex;

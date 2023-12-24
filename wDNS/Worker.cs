@@ -26,7 +26,7 @@ public class Worker : BackgroundService
         _logger.LogInformation("Starting listener.");
         _logger.LogInformation("Configuring");
 
-        await ReadConf();
+        await ReadConfigurations();
 
 #if SINGLETHREAD
         _listener.Listen(stoppingToken);
@@ -40,9 +40,9 @@ public class Worker : BackgroundService
         }
     }
 
-    private async Task ReadConf()
+    private async Task ReadConfigurations()
     {
-        _logger.LogInformation("Reading conf directory");
+        _logger.LogInformation("Reading {{conf}} directory");
 
 #if DEBUG
         Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);

@@ -3,7 +3,7 @@ using wDNS.Common.Extensions;
 
 namespace wDNS.Common.Models;
 
-public struct DnsName : IBufferWritable, IBufferReadable<DnsName>
+public readonly struct DnsName : IBufferWritable, IBufferReadable<DnsName>
 {
     public readonly string name;
     public readonly byte[] data;

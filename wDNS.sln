@@ -14,7 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wDNS.Client", "wDNS.Client\wDNS.Client.csproj", "{03BD4920-698F-480F-9A21-62C03B501D4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wDNS.Common", "wDNS.Common\wDNS.Common.csproj", "{D794AB43-469E-4450-8A17-F1E8185AF944}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wDNS.Common", "wDNS.Common\wDNS.Common.csproj", "{D794AB43-469E-4450-8A17-F1E8185AF944}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wDNS.Flood", "wDNS.Flood\wDNS.Flood.csproj", "{2725E7DF-A8BB-4A24-9BFB-184A45230B81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{D794AB43-469E-4450-8A17-F1E8185AF944}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D794AB43-469E-4450-8A17-F1E8185AF944}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D794AB43-469E-4450-8A17-F1E8185AF944}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2725E7DF-A8BB-4A24-9BFB-184A45230B81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2725E7DF-A8BB-4A24-9BFB-184A45230B81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2725E7DF-A8BB-4A24-9BFB-184A45230B81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2725E7DF-A8BB-4A24-9BFB-184A45230B81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -96,7 +96,7 @@ public class Forwarder : IForwarder, IDisposable
             
             if (conf.PrintQueryBytesOnReceiveError)
             {
-                var mBuffer = Common.Helpers.BufferHelpers.WriteBuffer(query);
+                var mBuffer = BufferHelpers.WriteBuffer(query);
                 sQuery = mBuffer.ToX2String();
             }
 

@@ -47,7 +47,7 @@ public class Listener : IListener, IDisposable
             _logger.LogDebug("Receiving requests...");
 
             var local = new IPEndPoint(ip, _config.Value.Port);
-            byte[] received;
+            byte[] received; 
 
             try
             {

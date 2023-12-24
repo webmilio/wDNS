@@ -83,11 +83,12 @@ public class Processor : IProcessor
             Additional = []
         };
 
+        response.Message.Flags |= Common.MessageFlags.Query_Response;
         response.Message.AnswerCount = (ushort)compiled.Count;
 
         _logger.LogDebug("Replying to request #{dentification} with response {Response}", response.Message.Identification, response);
 
-        buffer = Common.Helpers.BufferHelpers.WriteBuffer(response);
+        buffer = BufferHelpers.WriteBuffer(response);
         await recipient.SendAsync(buffer, result.RemoteEndPoint, stoppingToken);        
     }
 

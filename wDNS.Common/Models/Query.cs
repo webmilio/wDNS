@@ -4,7 +4,7 @@ using wDNS.Common.Helpers;
 
 namespace wDNS.Common.Models;
 
-public class Query : IBufferWritable
+public class Query : IBufferWritable, IBufferReadable<Query>
 {
     public delegate void Delegate(object sender, Query query);
     public delegate void OnReadDelegate(object sender, byte[] buffer, int length, Query query);
@@ -21,12 +21,7 @@ public class Query : IBufferWritable
     public static Query Read(byte[] buffer, ref int ptr)
     {
         var message = DnsMessage.Read(buffer, ref ptr);
-        var questions = new Question[message.QuestionCount];
-
-        for (int i = 0; i < questions.Length; i++)
-        {
-            questions[i] = Question.Read(buffer, ref ptr);
-        }
+        var questions = buffer.ReadMany(Question.Read, message.QuestionCount, ref ptr);
 
         return new()
         {

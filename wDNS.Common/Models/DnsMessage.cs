@@ -3,7 +3,7 @@ using wDNS.Common.Extensions;
 
 namespace wDNS.Common.Models;
 
-public class DnsMessage : IBufferWritable
+public class DnsMessage : IBufferWritable, IBufferReadable<DnsMessage>
 {
     public ushort Identification { get; set; }
     public MessageFlags Flags { get; set; }
