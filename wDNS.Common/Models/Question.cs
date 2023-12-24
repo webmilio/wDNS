@@ -46,5 +46,6 @@ public class Question : IBufferWritable, IBufferReadable<Question>
     public override int GetHashCode()
     {
         return HashCode.Combine(QName, QType, QClass);
+        //return HashCode.Combine(QName, QClass);
     }
 }

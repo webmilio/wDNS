@@ -8,12 +8,16 @@ public struct DnsName : IBufferWritable, IBufferReadable<DnsName>
     public readonly string name;
     public readonly byte[] data;
 
-    public DnsName(string name)
+    public DnsName(string name) : this(name, Constants.MaxLabelsTotalLength)
+    {
+    }
+
+    public DnsName(string name, int bufferLength)
     {
         this.name = name;
 
         int ptr = 0;
-        var buffer = new byte[Constants.MaxLabelLength];
+        var buffer = new byte[bufferLength];
 
         WriteLabels(buffer, name, ref ptr);
         Array.Resize(ref buffer, ptr);
@@ -61,7 +65,7 @@ public struct DnsName : IBufferWritable, IBufferReadable<DnsName>
         var start = ptr;
         var mPtr = GetLabelPointer(buffer, ref ptr);
 
-        var label = new StringBuilder(Constants.MaxLabelLength);
+        var label = new StringBuilder(Constants.MaxLabelSegmentLength);
 
         while (mPtr < buffer.Length && buffer[mPtr] > 0)
         {

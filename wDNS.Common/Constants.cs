@@ -2,6 +2,7 @@
 
 public static class Constants
 {
-    public const int MaxLabelLength = 63;
+    public const int MaxLabelSegmentLength = 63;
+    public const int MaxLabelsTotalLength = 255;
     public const int MaxUdpSize = 512;
 }

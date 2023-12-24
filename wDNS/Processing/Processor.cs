@@ -1,32 +1,36 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Sockets;
-using System.Text;
-using wDNS.Caching;
 using wDNS.Common;
 using wDNS.Common.Extensions;
 using wDNS.Common.Models;
 using wDNS.Forwarding;
+using wDNS.Knowledge;
+using wDNS.Knowledge.Caching;
 
 namespace wDNS.Processing;
 
 public class Processor : IProcessor
 {
     private readonly ILogger<Processor> _logger;
-    private readonly IForwarder _forwarder;
-    private readonly IAnswerCache _cachedAnswers;
     private readonly IOptions<Configuration.Processing> _config;
+
+    private readonly IForwarder _forwarder;
+    private readonly IKnowledgeProvider _knowledge;
+    private readonly IAnswerCache _cache;
+    
     private bool disposedValue;
 
     public event Query.OnReadDelegate QueryRead;
 
     public Processor(ILogger<Processor> logger, IOptions<Configuration.Processing> config, 
-        IForwarder forwarder, IAnswerCache cachedAnswers)
+        IForwarder forwarder, IKnowledgeProvider knowledge, IAnswerCache cache)
     {
         _logger = logger;
         _config = config;
 
         _forwarder = forwarder;
-        _cachedAnswers = cachedAnswers;
+        _knowledge = knowledge;
+        _cache = cache;
 
         if (_config.Value.PrintBytesOnReceive)
         {
@@ -51,20 +55,21 @@ public class Processor : IProcessor
         {
             var question = query.Questions[i];
 
-            if (_cachedAnswers.TryGet(question, out var cached))
+            if (_knowledge.TryAnswer(question, out var knowledge))
             {
-                _logger.LogDebug("Found cached answers for question {{{Question}}}: {{{Answer}}}", question, string.Join<Answer>(',', cached));
-                compiled.AddRange(cached);
+                _logger.LogDebug("Found knowledge for question {{{Question}}}: {{{Answer}}}", question, string.Join<Answer>(',', knowledge));
+                compiled.AddRange(knowledge);
             }
             else
             {
-                _logger.LogDebug("No answer found for question {{{Question}}}", question);
+                _logger.LogDebug("No knowledge found for question {{{Question}}}", question);
                 response = await _forwarder.ForwardAsync(query, stoppingToken);
 
+                _logger.LogInformation("Caching answers for question {{{Question}}}", question);
                 _logger.LogDebug("Caching answers {{{Answers}}} for question {{{Question}}}", 
                     Helpers.Concatenate(response.Answers), question);
-                _cachedAnswers.Add(question, response.Answers);
 
+                _cache.Add(question, response.Answers);
                 compiled.AddRange(response.Answers);
             }
         }

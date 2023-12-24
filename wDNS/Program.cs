@@ -1,5 +1,6 @@
-using wDNS.Caching;
 using wDNS.Forwarding;
+using wDNS.Knowledge;
+using wDNS.Knowledge.Caching;
 using wDNS.Listening;
 using wDNS.Processing;
 
@@ -13,11 +14,15 @@ public class Program
 
         builder.Services
             .AddHostedService<Worker>()
+
             .AddSingleton<IListener, Listener>()
             .AddSingleton<IProcessor, Processor>()
             .AddSingleton<IForwarder, Forwarder>()
 
             .AddSingleton<IAnswerCache, AnswerCache>()
+            .AddSingleton<IKnowledgeProvider, KnowledgeProvider>()
+
+            .AddSingleton<HostFileReader>()
 
             .Configure<Configuration.Listening>(o => builder.Configuration.GetSection(nameof(Configuration.Listening)).Bind(o))
             .Configure<Configuration.Processing>(o => builder.Configuration.GetSection(nameof(Configuration.Processing)).Bind(o))

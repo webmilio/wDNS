@@ -1,7 +1,7 @@
 ﻿using wDNS.Common.Extensions;
 using wDNS.Common.Models;
 
-namespace wDNS.Caching;
+namespace wDNS.Knowledge.Caching;
 
 public class AnswerCache : IAnswerCache
 {
@@ -19,7 +19,7 @@ public class AnswerCache : IAnswerCache
         _logger = logger;
     }
 
-    public bool TryGet(Question question, out Answer[] answers)
+    public bool TryAnswer(Question question, out IList<Answer> answers)
     {
         answers = null;
 
@@ -30,8 +30,10 @@ public class AnswerCache : IAnswerCache
                 return false;
             }
 
-            answers = new Answer[mAnswers.Count];
-            mAnswers.CopyTo(answers);
+            var xAnswers = new Answer[mAnswers.Count];
+            mAnswers.CopyTo(xAnswers);
+
+            answers = xAnswers;
         }
 
         return true;
@@ -72,12 +74,12 @@ public class AnswerCache : IAnswerCache
         }
     }
 
-    public void Remove(Question question, Answer answer) 
-    { 
+    public void Remove(Question question, Answer answer)
+    {
         lock (_lock)
         {
             _questions[question].Remove(answer);
-            
+
             if (_questions[question].Count <= 0)
             {
                 _questions.Remove(question);
