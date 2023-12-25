@@ -6,14 +6,14 @@ namespace wDNS.Common.Models;
 
 public struct Response : IBufferWritable, IBufferReadable<Response>
 {
-    public delegate void FromQuestionDelegate(object sender, Query src, byte[] buffer, Response result);
+    public delegate void FromQuestionDelegate(object sender, Request src, byte[] buffer, Response result);
 
-    public Query query;
+    public Request query;
     public IList<Answer> answers;
     public object[] authorities;
     public object[] additional;
 
-    public Response(Query query, IList<Answer> answers, object[] authorities, object[] additional)
+    public Response(Request query, IList<Answer> answers, object[] authorities, object[] additional)
     {
         this.query = query;
         this.answers = answers;
@@ -29,7 +29,7 @@ public struct Response : IBufferWritable, IBufferReadable<Response>
 
     public static Response Read(byte[] buffer, ref int ptr)
     {
-        var query = Query.Read(buffer, ref ptr);
+        var query = Request.Read(buffer, ref ptr);
         var answers = buffer.ReadMany(Answer.Read, query.message.answerCount, ref ptr);
         var authorities = new object[query.message.authorityCount];
         var additional = new object[query.message.additionalCount];

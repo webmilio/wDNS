@@ -7,9 +7,7 @@
     <UserSecretsId>dotnet-wDNS-314c3aec-ffd7-4933-9abc-d55de4dcfb01</UserSecretsId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);SINGLETHREAD</DefineConstants>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />

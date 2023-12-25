@@ -19,7 +19,7 @@ public class Processor : IProcessor
     private readonly IKnowledgeOrchestrator _knowledge;
     private readonly IAnswerCache _cache;
 
-    public event Query.OnReadDelegate QueryRead;
+    public event Request.OnReadDelegate QueryRead;
 
     public Processor(ILogger<Processor> logger, IOptions<Configuration.Processing> config, 
         IForwarder forwarder, IKnowledgeOrchestrator knowledge, IAnswerCache cache)
@@ -39,7 +39,7 @@ public class Processor : IProcessor
 
     public async Task ProcessAsync(UdpClient recipient, UdpReceiveResult udpResult, CancellationToken stoppingToken)
     {
-        var query = BufferHelpers.ReadBuffer<Query>(udpResult.Buffer);
+        var query = BufferHelpers.ReadBuffer<Request>(udpResult.Buffer);
 
         _logger.LogDebug("Read query {{{Query}}}", query);
         QueryRead?.Invoke(this, udpResult.Buffer, query);
@@ -64,7 +64,6 @@ public class Processor : IProcessor
                 _logger.LogDebug("No knowledge found for question {{{Question}}}", question);
                 response = await _forwarder.ForwardAsync(query, stoppingToken);
 
-                _logger.LogInformation("Caching answers for question {{{Question}}}", question);
                 _logger.LogDebug("Caching answers {{{Answers}}} for question {{{Question}}}", 
                     StringHelpers.Concatenate(response.answers), question);
 
@@ -97,7 +96,7 @@ public class Processor : IProcessor
         }
     }
 
-    private void Processor_QueryReadLogEnabled(object sender, byte[] buffer, Query query)
+    private void Processor_QueryReadLogEnabled(object sender, byte[] buffer, Request query)
     {
         _logger.LogDebug("Read query #{Identification}'s buffer:\n{Buffer}", query.message.identification, buffer.Tox2String());
     }

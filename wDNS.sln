@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7D713E80-D24C-4185-B7AD-7C2E25B36BF7}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Ideas.txt = Ideas.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wDNS.Client", "wDNS.Client\wDNS.Client.csproj", "{03BD4920-698F-480F-9A21-62C03B501D4D}"

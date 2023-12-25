@@ -45,7 +45,7 @@ public class QueryTests
         string qName, RecordTypes qType, RecordClasses qClass)
     {
         int ptr = 0;
-        var query = Query.Read(buffer, ref ptr);
+        var query = Request.Read(buffer, ref ptr);
 
         var message = query.message;
 
@@ -63,7 +63,7 @@ public class QueryTests
 
         var question = questions[0];
 
-        Assert.AreEqual(qName, question.name.name);
+        Assert.AreEqual(qName, question.name.Name);
         Assert.AreEqual(qType, question.type);
         Assert.AreEqual(qClass, question.@class);
     }
@@ -107,7 +107,7 @@ public class QueryTests
         string qName, RecordTypes qType, RecordClasses qClass)
     {
         int ptr = 0;
-        var query = Query.Read(buffer, ref ptr);
+        var query = Request.Read(buffer, ref ptr);
 
         ptr = 0;
         query.Write(buffer, ref ptr);

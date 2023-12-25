@@ -48,7 +48,7 @@ public class AnswerTests
 
     private void Equal(Answer answer, string qName, RecordTypes qType, RecordClasses qClass, int ttl, int rdLength, byte[] rData)
     {
-        Assert.AreEqual(qName, answer.question.name.name);
+        Assert.AreEqual(qName, answer.question.name.Name);
         Assert.AreEqual(qType, answer.question.type);
         Assert.AreEqual(qClass, answer.question.@class);
         Assert.AreEqual((uint)ttl, answer.ttl);

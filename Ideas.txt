@@ -1,0 +1,2 @@
+Semaphor for limiting the amount of tasks executing at the same time in the processor, deny incoming requests if no more tokens.
+Semaphor with timeout.

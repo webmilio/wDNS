@@ -14,7 +14,8 @@ public class HostFilesStore(ILogger<HostFilesStore> logger) : KnowledgeOrchestra
         logger.LogDebug("Conf directory: {{{Location}}}", root);
 #endif
 
-        var confDir = new DirectoryInfo("conf");
+        var currentDir = new DirectoryInfo(root);
+        var confDir = currentDir.CreateSubdirectory("conf");
         confDir.Create();
 
         logger.LogInformation("Reading Hosts files");
@@ -27,7 +28,7 @@ public class HostFilesStore(ILogger<HostFilesStore> logger) : KnowledgeOrchestra
     {
         var count = 0;
 
-        foreach (var file in directory.EnumerateFiles())
+        foreach (var file in directory.EnumerateFiles("*", SearchOption.AllDirectories))
         {
             var hosts = await Read(file);
             Add(hosts);
@@ -48,5 +49,10 @@ public class HostFilesStore(ILogger<HostFilesStore> logger) : KnowledgeOrchestra
         logger.LogDebug("Hosts file {{{File}}} contains {Count} questions", hostsFile.Name, hosts.Answers.Count);
 
         return hosts;
+    }
+
+    protected override bool ContinueAnswering(bool found)
+    {
+        return true;
     }
 }

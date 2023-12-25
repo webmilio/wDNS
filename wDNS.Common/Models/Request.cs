@@ -4,10 +4,10 @@ using wDNS.Common.Helpers;
 
 namespace wDNS.Common.Models;
 
-public struct Query : IBufferWritable, IBufferReadable<Query>
+public struct Request : IBufferWritable, IBufferReadable<Request>
 {
-    public delegate void Delegate(object sender, Query query);
-    public delegate void OnReadDelegate(object sender, byte[] buffer, Query query);
+    public delegate void Delegate(object sender, Request query);
+    public delegate void OnReadDelegate(object sender, byte[] buffer, Request query);
 
     public DnsMessage message;
     public IList<Question> questions;
@@ -18,7 +18,7 @@ public struct Query : IBufferWritable, IBufferReadable<Query>
         questions.Write(buffer, ref ptr);
     }
 
-    public static Query Read(byte[] buffer, ref int ptr)
+    public static Request Read(byte[] buffer, ref int ptr)
     {
         var message = DnsMessage.Read(buffer, ref ptr);
         var questions = buffer.ReadMany(Question.Read, message.questionCount, ref ptr);

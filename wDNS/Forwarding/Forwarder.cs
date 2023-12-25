@@ -17,10 +17,10 @@ public class Forwarder : IForwarder, IDisposable
 
     private bool disposedValue;
 
-    public delegate void ReceivedDelegate(object sender, Query src, byte[] buffer);
+    public delegate void ReceivedDelegate(object sender, Request src, byte[] buffer);
     public event ReceivedDelegate Received;
 
-    public event Query.Delegate? Forwarding;
+    public event Request.Delegate? Forwarding;
     public event Response.FromQuestionDelegate? Read;
 
     public Forwarder(ILogger<Forwarder> logger, IOptions<Configuration.Forwarding> config)
@@ -37,7 +37,7 @@ public class Forwarder : IForwarder, IDisposable
         }
     }
 
-    public async Task<Response> ForwardAsync(Query query, CancellationToken stoppingToken)
+    public async Task<Response> ForwardAsync(Request query, CancellationToken stoppingToken)
     {
         const string DisabledInConfig = "Disabled in config"; // Disabled in configuration file.
 
@@ -115,7 +115,7 @@ public class Forwarder : IForwarder, IDisposable
         return response;
     }
 
-    private void Forwarder_ReceivedLogEnabled(object sender, Query src, byte[] buffer)
+    private void Forwarder_ReceivedLogEnabled(object sender, Request src, byte[] buffer)
     {
         _logger.LogDebug("Received forwarded query #{Identification} response buffer:\n{Buffer}\nLength of {Length}",
             src.message.identification, buffer.Tox2String(), buffer.Length);

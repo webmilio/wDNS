@@ -29,11 +29,14 @@ public class KnowledgeOrchestrator : IKnowledgeOrchestrator
     {
         bool found = false;
 
-        for (int i = 0; i < sources.Count; i++)
+        for (int i = 0; i < sources.Count && ContinueAnswering(found); i++)
         {
             found |= sources[i].TryAnswer(question, result);
         }
 
         return found;
     }
+
+    // Stop at the first set of answers found.
+    protected virtual bool ContinueAnswering(bool found) => !found;
 }

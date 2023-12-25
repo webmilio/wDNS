@@ -9,11 +9,13 @@ public class Worker : BackgroundService
     private readonly IListener _listener;
     private readonly KnowledgeInitializer _knowledge;
 
-    public Worker(ILogger<Worker> logger, IListener listener, KnowledgeInitializer knowledge)
+    public Worker(ILogger<Worker> logger, IListener listener, IServiceProvider services)
     {
         _logger = logger;
         _listener = listener;
-        _knowledge = knowledge;
+
+        // We don't request it in the constructor so that the class can stay internal.
+        _knowledge = services.GetRequiredService<KnowledgeInitializer>();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

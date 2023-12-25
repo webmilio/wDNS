@@ -4,7 +4,7 @@ namespace wDNS.Common.Models;
 
 public struct Question : IBufferWritable, IBufferReadable<Question>
 {
-    public DnsName name;
+    public IDnsName name;
     public RecordTypes type;
     public RecordClasses @class;
 

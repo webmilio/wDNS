@@ -3,9 +3,9 @@ using wDNS.Common.Extensions;
 
 namespace wDNS.Common.Models;
 
-public readonly struct DnsName : IBufferWritable, IBufferReadable<DnsName>
+public class DnsName : IBufferWritable, IBufferReadable<DnsName>, IDnsName
 {
-    public readonly string name;
+    public string Name { get; }
     public readonly byte[] data;
 
     public DnsName(string name) : this(name, Constants.MaxLabelsTotalLength)
@@ -14,7 +14,7 @@ public readonly struct DnsName : IBufferWritable, IBufferReadable<DnsName>
 
     public DnsName(string name, int bufferLength)
     {
-        this.name = name;
+        this.Name = name;
 
         int ptr = 0;
         var buffer = new byte[bufferLength];
@@ -27,7 +27,7 @@ public readonly struct DnsName : IBufferWritable, IBufferReadable<DnsName>
 
     public DnsName(string name, byte[] data)
     {
-        this.name = name;
+        this.Name = name;
         this.data = data;
     }
 
@@ -39,7 +39,7 @@ public readonly struct DnsName : IBufferWritable, IBufferReadable<DnsName>
         }
         else
         {
-            WriteLabels(buffer, name, ref ptr);
+            WriteLabels(buffer, Name, ref ptr);
         }
     }
 
@@ -107,22 +107,31 @@ public readonly struct DnsName : IBufferWritable, IBufferReadable<DnsName>
         return ptr;
     }
 
-    public static implicit operator string(DnsName d) => d.name;
+    public static implicit operator string(DnsName d) => d.Name;
     public static implicit operator byte[](DnsName d) => d.data;
+
+    public virtual bool Match(string name)
+    {
+        return this.Name.Equals(name);
+    }
+
+    public virtual bool Match(byte[] data)
+    {
+        return Enumerable.SequenceEqual(this.data, data);
+    }
 
     public override string ToString()
     {
-        return name;
+        return Name;
     }
 
     public override bool Equals(object? obj)
     {
-        return obj is DnsName name &&
-            Enumerable.SequenceEqual(data, name.data);
+        return obj is DnsName name && Match(name.data);
     }
 
     public override int GetHashCode()
     {
-        return name.GetHashCode(); // TODO This is most likely not a good solution to the dictionary problem. Change this.
+        return Name.GetHashCode(); // TODO This is most likely not a good solution to the dictionary problem. Change this.
     }
 }

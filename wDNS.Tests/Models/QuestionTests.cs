@@ -83,7 +83,7 @@ public class QuestionTests
 
     private static void Equal(Question question, string qName, RecordTypes qType, RecordClasses qClass)
     {
-        Assert.AreEqual(qName, question.name.name);
+        Assert.AreEqual(qName, question.name.Name);
         Assert.AreEqual(qType, question.type);
         Assert.AreEqual(qClass, question.@class);
     }

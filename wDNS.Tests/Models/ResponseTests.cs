@@ -141,7 +141,7 @@ public class ResponseTests
         var response = Response.Read(buffer, ref ptr);
 
         Assert.AreEqual(QuestionCount, response.query.questions.Count);
-        Assert.AreEqual(QName, response.query.questions[0].name.name);
+        Assert.AreEqual(QName, response.query.questions[0].name.Name);
 
         Assert.AreEqual(AnswerCount, response.answers.Count);
 
@@ -163,7 +163,7 @@ public class ResponseTests
 
     private void Equal(Answer answer, string qName, RecordTypes qType, RecordClasses qClass, int ttl, int rdLength, byte[] rData)
     {
-        Assert.AreEqual(qName, answer.question.name.name);
+        Assert.AreEqual(qName, answer.question.name.Name);
         Assert.AreEqual(qType, answer.question.type);
         Assert.AreEqual(qClass, answer.question.@class);
         Assert.AreEqual((uint)ttl, answer.ttl);
