@@ -35,9 +35,9 @@ public class QuestionTests
 
         var question = new Question()
         {
-            QName = new(qName),
-            QType = qType,
-            QClass = qClass
+            name = new(qName),
+            type = qType,
+            @class = qClass
         };
         question.Write(buffer, ref ptr);
 
@@ -56,9 +56,9 @@ public class QuestionTests
         {
             return new()
             {
-                QName = new(qName),
-                QType = qType,
-                QClass = qClass
+                name = new(qName),
+                type = qType,
+                @class = qClass
             };
         }
 
@@ -83,8 +83,8 @@ public class QuestionTests
 
     private static void Equal(Question question, string qName, RecordTypes qType, RecordClasses qClass)
     {
-        Assert.AreEqual(qName, question.QName.name);
-        Assert.AreEqual(qType, question.QType);
-        Assert.AreEqual(qClass, question.QClass);
+        Assert.AreEqual(qName, question.name.name);
+        Assert.AreEqual(qType, question.type);
+        Assert.AreEqual(qClass, question.@class);
     }
 }

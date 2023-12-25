@@ -1,9 +1,11 @@
 ﻿using wDNS.Common;
+using wDNS.Common.Attributes;
 using wDNS.Common.Extensions;
 using wDNS.Common.Models;
 
 namespace wDNS.Knowledge.Caching;
 
+[Order(int.MaxValue)]
 public class AnswerCache : IAnswerCache
 {
     private record ToDecache(Question Question, Answer Answer);
@@ -20,7 +22,7 @@ public class AnswerCache : IAnswerCache
         _logger = logger;
     }
 
-    public bool PopulateAnswers(Question question, QuestionResult result)
+    public bool TryAnswer(Question question, QuestionResult result)
     {
         lock (_lock)
         {

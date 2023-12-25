@@ -1,6 +1,8 @@
+using wDNS.Common;
 using wDNS.Forwarding;
 using wDNS.Knowledge;
 using wDNS.Knowledge.Caching;
+using wDNS.Knowledge.HostFiles;
 using wDNS.Listening;
 using wDNS.Processing;
 
@@ -20,9 +22,11 @@ public class Program
             .AddSingleton<IForwarder, Forwarder>()
 
             .AddSingleton<IAnswerCache, AnswerCache>()
-            .AddSingleton<IKnowledgeProvider, KnowledgeProvider>()
+            .AddSingleton<IKnowledgeOrchestrator, KnowledgeOrganizer>() // We don't tell it it's a IQuestionable since we don't want it to initialize itself.
+            .AddSingleton<KnowledgeOrchestrator>()
 
-            .AddSingleton<HostFileReader>()
+            .AddSingleton<IQuestionable, AnswerCache>()
+            .AddSingleton<IQuestionable, HostFilesStore>()
 
             .Configure<Configuration.Listening>(o => builder.Configuration.GetSection(nameof(Configuration.Listening)).Bind(o))
             .Configure<Configuration.Processing>(o => builder.Configuration.GetSection(nameof(Configuration.Processing)).Bind(o))

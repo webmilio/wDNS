@@ -2,7 +2,9 @@
 
 namespace wDNS.Knowledge;
 
-public interface IKnowledgeProvider : IQuestionable
+public interface IKnowledgeStore : IQuestionable
 {
+    public Task Initialize();
+
     public void Add(IQuestionable source);
 }

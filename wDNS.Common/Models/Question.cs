@@ -2,17 +2,17 @@
 
 namespace wDNS.Common.Models;
 
-public class Question : IBufferWritable, IBufferReadable<Question>
+public struct Question : IBufferWritable, IBufferReadable<Question>
 {
-    public DnsName QName { get; set; }
-    public RecordTypes QType { get; set; }
-    public RecordClasses QClass { get; set; }
+    public DnsName name;
+    public RecordTypes type;
+    public RecordClasses @class;
 
     public void Write(byte[] buffer, ref int ptr)
     {
-        QName.Write(buffer, ref ptr);
-        buffer.WriteUInt16((ushort)QType, ref ptr);
-        buffer.WriteUInt16((ushort)QClass, ref ptr);
+        name.Write(buffer, ref ptr);
+        buffer.WriteUInt16((ushort)type, ref ptr);
+        buffer.WriteUInt16((ushort)@class, ref ptr);
     }
 
     public static Question Read(byte[] buffer, ref int ptr)
@@ -24,28 +24,28 @@ public class Question : IBufferWritable, IBufferReadable<Question>
 
         return new()
         {
-            QName = label,
-            QType = qType,
-            QClass = qClass
+            name = label,
+            type = qType,
+            @class = qClass
         };
     }
 
     public override string ToString()
     {
-        return $"{QType}/{QClass}: {QName}";
+        return $"{type}/{@class}: {name}";
     }
 
     public override bool Equals(object? obj)
     {
         return obj is Question question &&
-               QName.Equals(question.QName) &&
-               QType == question.QType &&
-               QClass == question.QClass;
+               name.Equals(question.name) &&
+               type == question.type &&
+               @class == question.@class;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(QName, QType, QClass);
+        return HashCode.Combine(name, type, @class);
         //return HashCode.Combine(QName, QClass);
     }
 }

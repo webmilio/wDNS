@@ -1,4 +1,3 @@
-using System.Reflection;
 using wDNS.Knowledge;
 using wDNS.Listening;
 
@@ -8,15 +7,13 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly IListener _listener;
+    private readonly KnowledgeOrchestrator _knowledge;
 
-    private readonly HostFileReader _hosts;
-
-    public Worker(ILogger<Worker> logger, IListener listener, HostFileReader hosts)
+    public Worker(ILogger<Worker> logger, IListener listener, KnowledgeOrchestrator knowledge)
     {
         _logger = logger;
         _listener = listener;
-
-        _hosts = hosts;
+        _knowledge = knowledge;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,7 +21,7 @@ public class Worker : BackgroundService
         _logger.LogInformation("Starting listener");
         _logger.LogInformation("Configuring");
 
-        await ReadConfigurations();
+        await InitializeKnowledge();
 
 #if SINGLETHREAD
         _listener.Listen(stoppingToken);
@@ -38,21 +35,8 @@ public class Worker : BackgroundService
         }
     }
 
-    private async Task ReadConfigurations()
+    private Task InitializeKnowledge()
     {
-        _logger.LogInformation("Reading {{conf}} directory");
-
-#if DEBUG
-        Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        _logger.LogDebug("Set current directory to {{{CurrentDirectory}}}", Environment.CurrentDirectory);
-#endif
-
-        var confDir = new DirectoryInfo("conf");
-        confDir.Create();
-
-        _logger.LogInformation("Reading Hosts files");
-        var hostsDir = confDir.CreateSubdirectory("hosts");
-
-        await _hosts.Read(hostsDir);
+        return _knowledge.Initialize();
     }
 }

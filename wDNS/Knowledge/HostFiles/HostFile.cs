@@ -6,7 +6,7 @@ using wDNS.Common.Extensions;
 using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 
-namespace wDNS.Knowledge;
+namespace wDNS.Knowledge.HostFiles;
 
 public class HostFile : IQuestionable
 {
@@ -14,8 +14,8 @@ public class HostFile : IQuestionable
     // SerializationOptions, that is able to figure out which line takes what parameters, etc.
     private static readonly Dictionary<string, Action<string[], SerializationOptions>> _options = new()
     {
-        { 
-            "ttl", 
+        {
+            "ttl",
             delegate (string[] split, SerializationOptions options)
             {
                 options.DefaultTTL = int.Parse(split[1]);
@@ -61,7 +61,7 @@ public class HostFile : IQuestionable
                 {
                     continue;
                 }
-                
+
                 var answers = hosts.Answers.GetOrProvide(answer.question, _ => new());
 
                 answers.Add(answer);
@@ -88,13 +88,13 @@ public class HostFile : IQuestionable
         var dnsName = new DnsName(segment);
         return new Question
         {
-            QName = dnsName,
+            name = dnsName,
 
             // TODO: Hardcoding things like this is not very cool, figure out how to change that later.
-            QType = qType,
+            type = qType,
 
             // TODO: Same as above, but I know nothing of the other classes.
-            QClass = RecordClasses.IN
+            @class = RecordClasses.IN
         };
     }
 
@@ -106,11 +106,13 @@ public class HostFile : IQuestionable
         return new Answer(question, data, (uint)options.DefaultTTL);
     }
 
-    public bool PopulateAnswers(Question question, QuestionResult result)
+    public bool TryAnswer(Question question, QuestionResult result)
     {
         if (Answers.TryGetValue(question, out var answers))
         {
             result.Answers.AddRange(answers);
+            result.Flags |= MessageFlags.Authoritative_Authoritative;
+
             return true;
         }
 
@@ -129,14 +131,14 @@ public class HostFile : IQuestionable
 
     public class GlobalEntryComparer : IEqualityComparer<Question>
     {
-        public bool Equals(Question? x, Question? y)
+        public bool Equals(Question x, Question y)
         {
-            return x != null && y != null && x.QName.Equals(y.QName);
+            return x.Equals(y);
         }
 
         public int GetHashCode([DisallowNull] Question obj)
         {
-            return obj.QName.GetHashCode();
+            return obj.name.GetHashCode();
         }
     }
 }

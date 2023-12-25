@@ -33,9 +33,9 @@ public class AnswerTests
     {
         var question = new Question
         {
-            QName = new(qName),
-            QType = qType,
-            QClass = qClass
+            name = new(qName),
+            type = qType,
+            @class = qClass
         };
 
         var data = new AnswerData(qType, (ushort)rData.Length, rData);
@@ -48,9 +48,9 @@ public class AnswerTests
 
     private void Equal(Answer answer, string qName, RecordTypes qType, RecordClasses qClass, int ttl, int rdLength, byte[] rData)
     {
-        Assert.AreEqual(qName, answer.question.QName.name);
-        Assert.AreEqual(qType, answer.question.QType);
-        Assert.AreEqual(qClass, answer.question.QClass);
+        Assert.AreEqual(qName, answer.question.name.name);
+        Assert.AreEqual(qType, answer.question.type);
+        Assert.AreEqual(qClass, answer.question.@class);
         Assert.AreEqual((uint)ttl, answer.ttl);
         Assert.AreEqual(rdLength, answer.data.length);
         Assert.AreEqual(rData.Length, answer.data.length);

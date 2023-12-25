@@ -16,13 +16,13 @@ public class Processor : IProcessor
     private readonly IOptions<Configuration.Processing> _config;
 
     private readonly IForwarder _forwarder;
-    private readonly IKnowledgeProvider _knowledge;
+    private readonly IKnowledgeOrchestrator _knowledge;
     private readonly IAnswerCache _cache;
 
     public event Query.OnReadDelegate QueryRead;
 
     public Processor(ILogger<Processor> logger, IOptions<Configuration.Processing> config, 
-        IForwarder forwarder, IKnowledgeProvider knowledge, IAnswerCache cache)
+        IForwarder forwarder, IKnowledgeOrchestrator knowledge, IAnswerCache cache)
     {
         _logger = logger;
         _config = config;
@@ -47,7 +47,6 @@ public class Processor : IProcessor
         var compiled = new List<Answer>(2);
 
         Response response;
-        MessageFlags flags;
 
         var questionResult = new QuestionResult();
         
@@ -55,7 +54,7 @@ public class Processor : IProcessor
         {
             var question = query.questions[i];
 
-            if (_knowledge.PopulateAnswers(question, questionResult))
+            if (_knowledge.TryAnswer(question, questionResult))
             {
                 _logger.LogDebug("Found knowledge for question {{{Question}}}: {{{Answer}}}", question, string.Join<Answer>(',', questionResult.Answers));
                 compiled.AddRange(questionResult.Answers);
@@ -75,6 +74,8 @@ public class Processor : IProcessor
         }
 
         response = new Response(query, compiled, [], []);
+
+        response.query.message.flags |= questionResult.Flags;
 
         response.query.message.Response = true;
         response.query.message.RecursionSupported = true;

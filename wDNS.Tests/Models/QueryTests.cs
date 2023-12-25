@@ -63,9 +63,9 @@ public class QueryTests
 
         var question = questions[0];
 
-        Assert.AreEqual(qName, question.QName.name);
-        Assert.AreEqual(qType, question.QType);
-        Assert.AreEqual(qClass, question.QClass);
+        Assert.AreEqual(qName, question.name.name);
+        Assert.AreEqual(qType, question.type);
+        Assert.AreEqual(qClass, question.@class);
     }
 
     [DataTestMethod]

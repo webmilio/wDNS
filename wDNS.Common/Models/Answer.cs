@@ -35,7 +35,7 @@ public struct Answer : IBufferWritable, IBufferReadable<Answer>
         var question = Question.Read(buffer, ref ptr);
 
         var ttl = buffer.ReadUInt32(ref ptr);
-        var data = AnswerData.Read(question.QType, buffer, ref ptr);
+        var data = AnswerData.Read(question.type, buffer, ref ptr);
 
         return new(question, data, ttl);
     }
