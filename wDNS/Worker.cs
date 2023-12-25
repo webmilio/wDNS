@@ -7,9 +7,9 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly IListener _listener;
-    private readonly KnowledgeOrchestrator _knowledge;
+    private readonly KnowledgeInitializer _knowledge;
 
-    public Worker(ILogger<Worker> logger, IListener listener, KnowledgeOrchestrator knowledge)
+    public Worker(ILogger<Worker> logger, IListener listener, KnowledgeInitializer knowledge)
     {
         _logger = logger;
         _listener = listener;

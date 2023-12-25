@@ -2,15 +2,16 @@
 
 namespace wDNS.Knowledge.HostFiles;
 
-public class HostFilesStore(ILogger<HostFilesStore> logger) : KnowledgeOrganizer
+public class HostFilesStore(ILogger<HostFilesStore> logger) : KnowledgeOrchestrator
 {
     public override async Task Initialize()
     {
         logger.LogInformation("Reading {{conf}} directory");
+        var root = Environment.CurrentDirectory;
 
 #if DEBUG
-        Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        logger.LogDebug("Set current directory to {{{CurrentDirectory}}}", Environment.CurrentDirectory);
+        root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        logger.LogDebug("Conf directory: {{{Location}}}", root);
 #endif
 
         var confDir = new DirectoryInfo("conf");

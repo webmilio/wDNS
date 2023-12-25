@@ -21,10 +21,10 @@ public class Program
             .AddSingleton<IProcessor, Processor>()
             .AddSingleton<IForwarder, Forwarder>()
 
-            .AddSingleton<IAnswerCache, AnswerCache>()
-            .AddSingleton<IKnowledgeOrchestrator, KnowledgeOrganizer>() // We don't tell it it's a IQuestionable since we don't want it to initialize itself.
-            .AddSingleton<KnowledgeOrchestrator>()
+            .AddSingleton<IKnowledgeOrchestrator, KnowledgeOrchestrator>() // We don't tell it it's a IQuestionable since we don't want it to initialize itself.
+            .AddSingleton<KnowledgeInitializer>()
 
+            .AddSingleton<IAnswerCache, AnswerCache>()
             .AddSingleton<IQuestionable, AnswerCache>()
             .AddSingleton<IQuestionable, HostFilesStore>()
 

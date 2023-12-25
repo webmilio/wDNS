@@ -1,30 +1,39 @@
-﻿using System.Reflection;
-using wDNS.Common;
-using wDNS.Common.Attributes;
+﻿using wDNS.Common;
+using wDNS.Common.Models;
 
 namespace wDNS.Knowledge;
 
-public class KnowledgeOrchestrator(ILogger<KnowledgeOrchestrator> logger, IKnowledgeOrchestrator knowledge, IServiceProvider services)
+public class KnowledgeOrchestrator : IKnowledgeOrchestrator
 {
-    internal Task Initialize()
+    protected readonly List<IQuestionable> sources = [];
+
+    public virtual async Task Initialize()
     {
-        logger.LogInformation("Initializing knowledge root");
-        IEnumerable<IQuestionable> questionables = services.GetServices<IQuestionable>();
-
-        questionables = questionables.OrderBy(Order);
-
-        foreach (var questionable in questionables)
+        for (int i = 0; i < sources.Count; i++)
         {
-            logger.LogDebug("Registering {{{Class}}} as a knowledge source", questionable);
-            knowledge.Add(questionable);
+            if (sources[i] is IKnowledgeStore ks)
+            {
+                await ks.Initialize();
+            }
         }
-
-        return knowledge.Initialize();
     }
 
-    private int Order(IQuestionable questionable)
+    /// <summary>Adds a knowledge source at the front of the pile.</summary>
+    /// <param name="source"></param>
+    public void Add(IQuestionable source)
     {
-        var order = questionable.GetType().GetCustomAttribute<OrderAttribute>();
-        return order?.Order ?? int.MaxValue / 2;
+        sources.Insert(0, source);
+    }
+
+    public bool TryAnswer(Question question, QuestionResult result)
+    {
+        bool found = false;
+
+        for (int i = 0; i < sources.Count; i++)
+        {
+            found |= sources[i].TryAnswer(question, result);
+        }
+
+        return found;
     }
 }
