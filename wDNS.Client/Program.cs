@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using wDNS.Common;
+using wDNS.Common.Helpers;
 using wDNS.Common.Models;
 
 namespace wDNS.Client;
@@ -9,7 +11,7 @@ internal class Program
     private static void Main(string[] args)
     {
         // example.com
-        byte[] dnsRequest = new byte[]
+        /*var requestBytes = new byte[]
         {
             // DNS Message
             148, 99,    // Transaction ID (37987)
@@ -36,8 +38,8 @@ internal class Program
             0,          // QName Termination
             0, 1,       // QType: A
             0, 1        // QClass: IN
-        };
-        /*var dnsRequest = new byte[]
+        };*/
+        /*var requestBytes = new byte[]
         {
             0x91, 0x4C, 
             0x01, 0x00, 
@@ -52,10 +54,35 @@ internal class Program
         // audio-akamai-cdn.akamaized.net
         // var dnsRequest = new byte[] { 0x88, 0x5E, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0x61, 0x75, 0x64, 0x69, 0x6F, 0x2D, 0x61, 0x6B, 0x2D, 0x73, 0x70, 0x6F, 0x74, 0x69, 0x66, 0x79, 0x2D, 0x63, 0x6F, 0x6D, 0x09, 0x61, 0x6B, 0x61, 0x6D, 0x61, 0x69, 0x7A, 0x65, 0x64, 0x03, 0x6E, 0x65, 0x74, 0x00, 0x00, 0x01, 0x00, 0x01 };
         
-        var dst = new IPEndPoint(IPAddress.Loopback, 53);
         using var client = new UdpClient(5566);
 
-        client.Send(dnsRequest, dst);
+    Main:
+        var domain = Console.ReadLine()!;
+        var request = new Request()
+        {
+            message = new()
+            {
+                flags = MessageFlags.Query_Query | MessageFlags.RecursionDesired_Desired,
+                questionCount = 1
+            },
+            questions = new Question[]
+            {
+                new()
+                {
+                    type = RecordTypes.A,
+                    @class = RecordClasses.IN,
+                    name = new DnsName(domain)
+                }
+            }
+        };
+
+        var requestBytes = BufferHelpers.WriteBuffer(request);
+
+        //var dst = new IPEndPoint(IPAddress.Loopback, 1053);
+        var dst = new IPEndPoint(IPAddress.Parse("8.8.8.8"), 53);
+        //var dst = new IPEndPoint(IPAddress.Parse("207.164.234.129"), 53);
+
+        client.Send(requestBytes, dst);
         var buffer = client.Receive(ref dst);
 
         for (int i = 0; i < buffer.Length; i++)
@@ -68,5 +95,6 @@ internal class Program
         var response = Response.Read(buffer, ref ptr);
 
         Console.WriteLine(response);
+goto Main;
     }
 }

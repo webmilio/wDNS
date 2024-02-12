@@ -35,7 +35,7 @@ public class QuestionTests
 
         var question = new Question()
         {
-            name = new(qName),
+            name = new DnsName(qName),
             type = qType,
             @class = qClass
         };
@@ -56,7 +56,7 @@ public class QuestionTests
         {
             return new()
             {
-                name = new(qName),
+                name = new DnsName(qName),
                 type = qType,
                 @class = qClass
             };

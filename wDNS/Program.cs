@@ -17,7 +17,7 @@ public class Program
         builder.Services
             .AddHostedService<Worker>()
 
-            .AddSingleton<IListener, Listener>()
+            .AddSingleton<IListener, UdpListener>()
             .AddSingleton<IProcessor, Processor>()
             .AddSingleton<IForwarder, Forwarder>()
 

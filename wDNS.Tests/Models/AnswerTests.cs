@@ -33,7 +33,7 @@ public class AnswerTests
     {
         var question = new Question
         {
-            name = new(qName),
+            name = new DnsName(qName),
             type = qType,
             @class = qClass
         };

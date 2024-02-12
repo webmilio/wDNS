@@ -15,15 +15,56 @@ public class HostFile : IQuestionable
     private static readonly Dictionary<string, Action<string[], SerializationOptions>> _options = new()
     {
         {
-            "ttl",
-            delegate (string[] split, SerializationOptions options)
-            {
+            "ttl", delegate (string[] split, SerializationOptions options) {
                 options.DefaultTTL = int.Parse(split[1]);
+            }
+        },
+        {
+            "regex", delegate (string[] split, SerializationOptions options) {
+                options.RegexMatching = true;
             }
         }
     };
 
     public Dictionary<Question, List<Answer>> Answers { get; } = new Dictionary<Question, List<Answer>>(new GlobalEntryComparer());
+    
+    private delegate bool TryAnswerDelegate(Question question, QuestionResult result);
+    private TryAnswerDelegate _tryAnswerMethod;
+
+    public bool TryAnswer(Question question, QuestionResult result)
+    {
+        return _tryAnswerMethod(question, result);
+    }
+
+    private bool TryAnswerNormal(Question question, QuestionResult result)
+    {
+        if (Answers.TryGetValue(question, out var answers))
+        {
+            result.Answers.AddRange(answers);
+            result.Flags |= MessageFlags.Authoritative_Authoritative;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryAnswerRegex(Question question, QuestionResult result)
+    {
+        try
+        {
+            var pair = Answers.First(k => k.Key.name.Match(question.name.Name));
+
+            result.Answers.AddRange(pair.Value);
+            result.Flags |= MessageFlags.Authoritative_Authoritative;
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false; // Try-Catches are slow but I can't compare a struct to 'default' so it'll do.
+        }
+    }
 
     public static Task<HostFile> Read(TextReader reader) => Read(reader, SerializationOptions.Default);
 
@@ -68,6 +109,7 @@ public class HostFile : IQuestionable
             }
         }
 
+        hosts._tryAnswerMethod = serializationOptions.RegexMatching ? hosts.TryAnswerRegex : hosts.TryAnswerNormal;
         return hosts;
     }
 
@@ -79,13 +121,23 @@ public class HostFile : IQuestionable
 
         var qType = address.AddressFamily == AddressFamily.InterNetworkV6 ? RecordTypes.AAAA : RecordTypes.A;
 
-        var question = ParseQuestion(s[1], qType, options);
+        var question = ParseQuestion(s[1..], qType, options);
         return ParseAnswer(address, qType, question, options);
     }
 
-    private static Question ParseQuestion(string segment, RecordTypes qType, SerializationOptions options)
+    private static Question ParseQuestion(string[] segment, RecordTypes qType, SerializationOptions options)
     {
-        var dnsName = new DnsName(segment);
+        IDnsName dnsName;
+
+        if (options.RegexMatching && segment[0].StartsWith('/'))
+        {
+            dnsName = new RegexDnsName(string.Join(' ', segment));
+        }
+        else
+        {
+            dnsName = new DnsName(segment[0]);
+        }
+        
         return new Question
         {
             name = dnsName,
@@ -106,19 +158,6 @@ public class HostFile : IQuestionable
         return new Answer(question, data, (uint)options.DefaultTTL);
     }
 
-    public bool TryAnswer(Question question, QuestionResult result)
-    {
-        if (Answers.TryGetValue(question, out var answers))
-        {
-            result.Answers.AddRange(answers);
-            result.Flags |= MessageFlags.Authoritative_Authoritative;
-
-            return true;
-        }
-
-        return false;
-    }
-
     public class SerializationOptions
     {
         public static SerializationOptions Default => new();
@@ -127,6 +166,8 @@ public class HostFile : IQuestionable
         public char Configuration { get; set; } = '@';
 
         public int DefaultTTL { get; set; } = (int)TimeSpan.FromMinutes(5).TotalSeconds;
+
+        public bool RegexMatching { get; set; } = false;
     }
 
     public class GlobalEntryComparer : IEqualityComparer<Question>

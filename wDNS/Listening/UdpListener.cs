@@ -6,9 +6,9 @@ using wDNS.Common.Extensions;
 
 namespace wDNS.Listening;
 
-public class Listener : IListener, IDisposable
+public class UdpListener : IListener, IDisposable
 {
-    private readonly ILogger<Listener> _logger;
+    private readonly ILogger<UdpListener> _logger;
     private readonly IOptions<Configuration.Listening> _config;
     private readonly IOptions<Configuration.SuppressWarnings> _suppressed;
 
@@ -20,7 +20,7 @@ public class Listener : IListener, IDisposable
     public delegate void ReceivedDelegate(object sender, byte[] buffer);
     public event ReceivedDelegate? Received;
 
-    public Listener(ILogger<Listener> logger,
+    public UdpListener(ILogger<UdpListener> logger,
         IOptions<Configuration.Listening> config, IOptions<Configuration.SuppressWarnings> suppressed,
         IProcessor processor)
     {
