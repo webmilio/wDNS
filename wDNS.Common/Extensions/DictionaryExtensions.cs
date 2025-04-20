@@ -1,4 +1,7 @@
-﻿namespace wDNS.Common.Extensions;
+﻿using System;
+using System.Collections.Generic;
+
+namespace wDNS.Common.Extensions;
 
 public static class DictionaryExtensions
 {

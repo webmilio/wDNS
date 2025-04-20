@@ -1,6 +1,6 @@
 ﻿namespace wDNS.Common;
 
-public interface IBufferReadable<T>
+public interface IBufferReadable
 {
-    public static abstract T Read(byte[] buffer, ref int ptr);
+    void Read(BufferContext context);
 }

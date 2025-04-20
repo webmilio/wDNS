@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace wDNS.Common;
 
@@ -8,34 +9,40 @@ namespace wDNS.Common;
 [Flags]
 public enum MessageFlags : ushort
 {
-    Query_Query = 0b0000000000000000,
-    Query_Response = 0b1000000000000000,
+    Query_Query = 0b0_000000000000000,
+    Query_Response = 0b1_000000000000000,
 
-    Opcode_Standard = 0b0000000000000000,
-    Opcode_Inverse = 0b0000100000000000,
-    Opcode_ServerStatus = 0b0001000000000000,
+    Opcode_Standard = 0b0_0000_000_00000000,
+    Opcode_Inverse = 0b0_0001_000_00000000,
+    Opcode_ServerStatus = 0b0_0010_00000000000,
 
-    Authoritative_NonAuthoritative = 0b0000000000000000,
-    Authoritative_Authoritative = 0b0000010000000000,
+    Authoritative_NonAuthoritative = 0b00000_0_0000000000,
+    Authoritative_Authoritative = 0b00000_1_0000000000,
 
-    Truncation_Entire = 0b0000000000000000,
-    Truncation_Truncated = 0b0000001000000000,
+    Truncation_Entire = 0b000000_0_000000000,
+    Truncation_Truncated = 0b000000_1_000000000,
 
-    RecursionDesired_NotDesired = 0b0000000000000000,
-    RecursionDesired_Desired = 0b0000000100000000,
+    RecursionDesired_NotDesired = 0b0000000_0_00000000,
+    RecursionDesired_Desired = 0b0000000_1_00000000,
 
-    RecursionAvailable_Unsupported = 0b0000000000000000,
-    RecursionAvailable_Supported = 0b0000000010000000,
+    RecursionAvailable_Unsupported = 0b00000000_0_0000000,
+    RecursionAvailable_Supported = 0b00000000_1_0000000,
 
     // Z doesn't exist, but 1 << 4, 3 bits long
     //                                  0b0000000001110000
 
-    ResponseCode_NoError = 0b0000000000000000,
-    ResponseCode_FormatError = 0b0000000000000001,
-    ResponseCode_ServerFailure = 0b0000000000000010,
-    ResponseCode_NameError = 0b0000000000000011,
-    ResponseCode_NotImplemented = 0b0000000000000100,
-    ResponseCode_Refused = 0b0000000000000101
+    ResponseCode_NoError = 0b000000000000_0000,
+    ResponseCode_FormatError = 0b000000000000_0001,
+    ResponseCode_ServerFailure = 0b000000000000_0010,
+    ResponseCode_NameError = 0b000000000000_0011,
+    ResponseCode_NotImplemented = 0b000000000000_0100,
+    ResponseCode_Refused = 0b000000000000_0101,
+
+    ResponseCode_NameExistsWhenItShouldnt = 0b000000000000_0110,
+    ResponseCode_RRSetExistsWhenitShouldnt = 0b000000000000_0111,
+    ResponseCode_RRSetDoesntExistWhenitShould = 0b000000000000_1000,
+    ResponseCode_NotAuthenticated = 0b000000000000_1001,
+    ResponseCode_NotInZone = 0b000000000000_1010
 }
 
 public class MessageFlagsHelpers
@@ -47,30 +54,10 @@ public class MessageFlagsHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetFlag(ref MessageFlags flags, MessageFlags trueFlag, MessageFlags falseMask, bool value)
+    public static void SetFlag(ref MessageFlags flags, MessageFlags trueMask, MessageFlags falseMask, bool value)
     {
-        flags = value ? (flags | trueFlag) : flags & falseMask;
+        flags = value ? (flags | trueMask) : flags & falseMask;
     }
-}
-
-public enum RecordTypes : ushort
-{
-    A = 1,
-    NS = 2,
-    CNAME = 5,
-    SOA = 6,
-    MB = 7,
-    MG = 8,
-    MR = 9,
-    NULL = 10,
-    WKS = 11,
-    PTR = 12,
-    HINFO = 13,
-    MINFO = 14,
-    MX = 15,
-    TXT = 16,
-    AAAA = 28,
-    SRV = 33
 }
 
 public enum RecordClasses : ushort

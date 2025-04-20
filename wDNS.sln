@@ -1,21 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.8.34330.188
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wDNS", "wDNS\wDNS.csproj", "{C879D672-ED1A-47C0-A582-C86DDF8AD616}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wDNS.Common", "wDNS.Common\wDNS.Common.csproj", "{37FB0679-2A03-48F6-AEBC-92DE98AFE74F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wDNS.Tests", "wDNS.Tests\wDNS.Tests.csproj", "{F50CEF30-3F96-4097-8A82-DAB72AE40EAB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7D713E80-D24C-4185-B7AD-7C2E25B36BF7}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		Ideas.txt = Ideas.txt
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wDNS.Client", "wDNS.Client\wDNS.Client.csproj", "{03BD4920-698F-480F-9A21-62C03B501D4D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wDNS.Common", "wDNS.Common\wDNS.Common.csproj", "{D794AB43-469E-4450-8A17-F1E8185AF944}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wDNS.Common.Tests", "wDNS.Common.Tests\wDNS.Common.Tests.csproj", "{BEF8CCD5-72AE-4BC8-B535-CBB4E417EA2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,27 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C879D672-ED1A-47C0-A582-C86DDF8AD616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C879D672-ED1A-47C0-A582-C86DDF8AD616}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C879D672-ED1A-47C0-A582-C86DDF8AD616}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C879D672-ED1A-47C0-A582-C86DDF8AD616}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F50CEF30-3F96-4097-8A82-DAB72AE40EAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F50CEF30-3F96-4097-8A82-DAB72AE40EAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F50CEF30-3F96-4097-8A82-DAB72AE40EAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F50CEF30-3F96-4097-8A82-DAB72AE40EAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03BD4920-698F-480F-9A21-62C03B501D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03BD4920-698F-480F-9A21-62C03B501D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03BD4920-698F-480F-9A21-62C03B501D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03BD4920-698F-480F-9A21-62C03B501D4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D794AB43-469E-4450-8A17-F1E8185AF944}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D794AB43-469E-4450-8A17-F1E8185AF944}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D794AB43-469E-4450-8A17-F1E8185AF944}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D794AB43-469E-4450-8A17-F1E8185AF944}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37FB0679-2A03-48F6-AEBC-92DE98AFE74F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37FB0679-2A03-48F6-AEBC-92DE98AFE74F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37FB0679-2A03-48F6-AEBC-92DE98AFE74F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37FB0679-2A03-48F6-AEBC-92DE98AFE74F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEF8CCD5-72AE-4BC8-B535-CBB4E417EA2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEF8CCD5-72AE-4BC8-B535-CBB4E417EA2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEF8CCD5-72AE-4BC8-B535-CBB4E417EA2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEF8CCD5-72AE-4BC8-B535-CBB4E417EA2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B63B49F5-08F5-4B3F-914C-95324645E80B}
+		SolutionGuid = {012CE86B-503C-49D9-B993-E3CD76D440A7}
 	EndGlobalSection
 EndGlobal

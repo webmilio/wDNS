@@ -2,5 +2,5 @@
 
 public interface IBufferWritable
 {
-    public void Write(byte[] buffer, ref int ptr);
+    void Write(BufferContext context);
 }

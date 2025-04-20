@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Buffers.Binary;
+using System.Collections.Generic;
+using System.Text;
 
 namespace wDNS.Common.Extensions;
 
@@ -69,13 +72,14 @@ public static class Buffers
         return items;
     }
 
-    public static void Write<T>(this IList<T> items, byte[] buffer, ref int ptr) where T : IBufferWritable
+    // TODO Handle this change.
+    /*public static void Write<T>(this IList<T> items, byte[] buffer, ref int ptr) where T : IBufferWritable
     {
         for (int i = 0; i < items.Count; i++)
         {
             items[i].Write(buffer, ref ptr);
         }
-    }
+    }*/
 
     public static string Tox2String(this byte[] buffer) => ToX2String(buffer, 0, buffer.Length);
 
