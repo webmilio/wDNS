@@ -48,22 +48,8 @@ public enum MessageFlags : ushort
 public class MessageFlagsHelpers
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetFlag(ref MessageFlags flags, MessageFlags flag, bool value)
-    {
-        SetFlag(ref flags, flag, ~flag, value);
-    }
+    public static void SetFlag(ref MessageFlags flags, MessageFlags flag, bool value) => SetFlag(ref flags, flag, ~flag, value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetFlag(ref MessageFlags flags, MessageFlags trueMask, MessageFlags falseMask, bool value)
-    {
-        flags = value ? (flags | trueMask) : flags & falseMask;
-    }
-}
-
-public enum RecordClasses : ushort
-{
-    IN = 1,
-    CS = 2,
-    CH = 3,
-    HS = 4
+    public static void SetFlag(ref MessageFlags flags, MessageFlags trueMask, MessageFlags falseMask, bool value) => flags = value ? (flags | trueMask) : flags & falseMask;
 }

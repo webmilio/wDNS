@@ -1,24 +1,38 @@
-﻿namespace wDNS.Common.Models;
+﻿using System;
 
-public struct Question : IBufferWritable, IBufferReadable
+namespace wDNS.Common.Models;
+
+public struct Question : IBufferWritable, IBufferReadable, IEquatable<Question>
 {
     public Label name;
     public RecordTypes types;
     public RecordClasses @class;
 
-    public void Read(BufferContext context)
+    public void ReadSeq(BufferContext context)
     {
-        name.Read(context);
+        name.ReadSeq(context);
 
         types = (RecordTypes)context.ReadUInt16();
         @class = (RecordClasses)context.ReadUInt16();
     }
 
-    public readonly void Write(BufferContext context)
+    public readonly void Write(BufferContext destination)
     {
-        name.Write(context);
+        name.Write(destination);
 
-        context.WriteUInt16((ushort)types);
-        context.WriteUInt16((ushort)@class);
+        destination.WriteUInt16((ushort)types);
+        destination.WriteUInt16((ushort)@class);
     }
+
+    public override readonly bool Equals(object? obj) => obj is Question question && Equals(question);
+
+    public readonly bool Equals(Question other) => name.Equals(other.name) &&
+               types == other.types &&
+               @class == other.@class;
+
+    public override readonly int GetHashCode() => HashCode.Combine(name, types, @class);
+
+    public static bool operator ==(Question left, Question right) => left.Equals(right);
+
+    public static bool operator !=(Question left, Question right) => !(left == right);
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using wDNS.Common.Extensions;
 
 namespace wDNS.Common.Models;
 
@@ -36,7 +35,7 @@ public struct Message : IBufferWritable, IBufferReadable, IEquatable<Message>
         set => MessageFlagsHelpers.SetFlag(ref flags, MessageFlags.RecursionAvailable_Supported, value);
     }
 
-    public void Read(BufferContext context)
+    public void ReadSeq(BufferContext context)
     {
         id = context.ReadUInt16();
         flags = (MessageFlags)context.ReadUInt16();
@@ -58,33 +57,20 @@ public struct Message : IBufferWritable, IBufferReadable, IEquatable<Message>
         context.WriteUInt16(additionalCount);
     }
 
-    public override readonly string ToString()
-    {
-        return $"ID: {id}, Flags: {flags}, Ques./Answ./Auth./Add.: {questionCount}/{answerCount}/{authorityCount}/{additionalCount}";
-    }
+    public override readonly string ToString() => $"ID: {id}, Flags: {flags}, Ques./Answ./Auth./Add.: {questionCount}/{answerCount}/{authorityCount}/{additionalCount}";
 
-    public override bool Equals(object? obj)
-    {
-        return obj is Message message && Equals(message);
-    }
+    public override readonly bool Equals(object? obj) => obj is Message message && Equals(message);
 
-    public bool Equals(Message other)
-    {
-        return id == other.id &&
+    public readonly bool Equals(Message other) => id == other.id &&
                flags == other.flags &&
                questionCount == other.questionCount &&
                answerCount == other.answerCount &&
                authorityCount == other.authorityCount &&
                additionalCount == other.additionalCount;
-    }
 
-    public static bool operator ==(Message left, Message right)
-    {
-        return left.Equals(right);
-    }
+    public override readonly int GetHashCode() => HashCode.Combine(id, flags, questionCount, answerCount, authorityCount, additionalCount);
 
-    public static bool operator !=(Message left, Message right)
-    {
-        return !(left == right);
-    }
+    public static bool operator ==(Message left, Message right) => left.Equals(right);
+
+    public static bool operator !=(Message left, Message right) => !(left == right);
 }

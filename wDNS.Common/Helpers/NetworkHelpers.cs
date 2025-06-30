@@ -11,9 +11,9 @@ public class NetworkHelpers
     private delegate IPAddress IPAddressVariableLookup(string ipString);
     private static readonly Dictionary<string, IPAddressVariableLookup> _ipVariables = new(StringComparer.OrdinalIgnoreCase)
     {
-        { 
-            "default-gateway", 
-            s => GetDefaultGateway() ?? throw new ArgumentException("Could not find default gateway!") 
+        {
+            "default-gateway",
+            s => GetDefaultGateway() ?? throw new ArgumentException("Could not find default gateway!")
         }
     };
 
@@ -35,16 +35,25 @@ public class NetworkHelpers
     // Heavily inspired by (if not copied from) https://stackoverflow.com/questions/13634868/get-the-default-gateway
     public static IPAddress? GetDefaultGateway()
     {
-        var @interface = NetworkInterface.GetAllNetworkInterfaces()
-            .FirstOrDefault(delegate (NetworkInterface inFace)
+        foreach (var intr in NetworkInterface.GetAllNetworkInterfaces())
+        {
+            if (intr.OperationalStatus != OperationalStatus.Up ||
+                intr.NetworkInterfaceType != NetworkInterfaceType.Ethernet ||
+                intr.NetworkInterfaceType == NetworkInterfaceType.Loopback)
             {
-                return
-                    inFace.OperationalStatus == OperationalStatus.Up &&
-                    inFace.NetworkInterfaceType != NetworkInterfaceType.Loopback;
-            });
+                continue;
+            }
 
-        return @interface?.GetIPProperties()?
-            .GatewayAddresses?.FirstOrDefault(a => a != null)?
-            .Address;
+            var ipProperties = intr?.GetIPProperties()?
+                .GatewayAddresses?.FirstOrDefault(a => a != null)?
+                .Address;
+
+            if (ipProperties != null)
+            {
+                return ipProperties;
+            }
+        }
+
+        return null;
     }
 }

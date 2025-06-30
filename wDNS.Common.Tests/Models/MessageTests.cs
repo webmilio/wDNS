@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using wDNS.Common.Models;
+﻿using wDNS.Common.Models;
+using wDNS.Common.Tests.Helpers;
 
 namespace wDNS.Common.Tests.Models;
 
@@ -9,8 +9,8 @@ public class MessageTests
     [TestMethod]
     public void Write_ShouldReturn_NonEmptyBuffer()
     {
-        var context = BufferContextHelpers.Create();
-        var notExpected = new byte[context.buffer.Length];
+        var ctx = BufferContextHelpers.Create();
+        var notExpected = new byte[ctx.buffer.Length];
 
         var write = new Message()
         {
@@ -19,9 +19,9 @@ public class MessageTests
             authorityCount = 3,
             RecursionDesired = true,
         };
-        write.Write(context);
+        write.Write(ctx);
 
-        CollectionAssert.AreNotEqual(notExpected, context.buffer);
+        CollectionAssert.AreNotEqual(notExpected, ctx.buffer);
     }
 
     [TestMethod]
@@ -37,12 +37,55 @@ public class MessageTests
             RecursionDesired = true,
         };
         write.Write(context);
-
         context.ResetPointer();
 
         var read = new Message();
-        read.Read(context);
+        read.ReadSeq(context);
 
         Assert.AreEqual(write, read);
+    }
+
+    [TestMethod]
+    public void Equality_True_ForSameFields()
+    {
+        var x = new Message()
+        {
+            id = 666,
+            answerCount = 4,
+            authorityCount = 3,
+            RecursionDesired = true,
+        };
+        var y = new Message()
+        {
+            id = 666,
+            answerCount = 4,
+            authorityCount = 3,
+            RecursionDesired = true,
+        };
+
+        Assert.AreEqual(x, y);
+        Assert.AreEqual(x.GetHashCode(), y.GetHashCode());
+    }
+
+    [TestMethod]
+    public void Equality_False_ForDifferentFields()
+    {
+        var x = new Message()
+        {
+            id = 666,
+            answerCount = 4,
+            authorityCount = 3,
+            RecursionDesired = true,
+        };
+        var y = new Message()
+        {
+            id = 777,
+            answerCount = 4,
+            authorityCount = 33,
+            RecursionDesired = false,
+        };
+
+        Assert.AreNotEqual(x, y);
+        Assert.AreNotEqual(x.GetHashCode(), y.GetHashCode());
     }
 }

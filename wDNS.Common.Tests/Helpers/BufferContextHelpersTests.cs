@@ -2,7 +2,7 @@
 using System.Text;
 using wDNS.Common.Models;
 
-namespace wDNS.Common.Tests;
+namespace wDNS.Common.Tests.Helpers;
 
 [TestClass]
 public class BufferContextHelpersTests
