@@ -23,16 +23,6 @@ public struct Label : IBufferWritable, IBufferReadable, IEquatable<Label>
     {
         var segments = new List<LabelSegment>();
 
-        for (; !context.EoB && context.CurrentByte != Terminator;)
-        {
-
-        }
-    }
-
-    public void ReadSeq(BufferContext context)
-    {
-        var segments = new List<LabelSegment>();
-
         for (;
             context.pointer < context.buffer.Length &&
             context.CurrentByte != Terminator;

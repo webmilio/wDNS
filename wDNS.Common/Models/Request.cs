@@ -7,10 +7,10 @@ public struct Request : IBufferWritable, IBufferReadable, IEquatable<Request>
     public Message message;
     public Question question;
 
-    public void ReadSeq(BufferContext context)
+    public void Read(BufferContext context)
     {
-        message.ReadSeq(context);
-        question.ReadSeq(context);
+        message.Read(context);
+        question.Read(context);
     }
 
     public readonly void Write(BufferContext context)

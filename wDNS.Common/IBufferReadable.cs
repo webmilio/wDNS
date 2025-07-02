@@ -2,5 +2,5 @@
 
 public interface IBufferReadable
 {
-    void ReadSeq(BufferContext context);
+    void Read(BufferContext context);
 }

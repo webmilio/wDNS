@@ -13,9 +13,9 @@ public struct Answer : IBufferReadable, IBufferWritable, IEquatable<Answer>
     public ushort rdlength;
     public byte[] rdata;
 
-    public void ReadSeq(BufferContext context)
+    public void Read(BufferContext context)
     {
-        name.ReadSeq(context);
+        name.Read(context);
         type = (RecordTypes)context.ReadUInt16();
         @class = (RecordClasses)context.ReadUInt16();
 

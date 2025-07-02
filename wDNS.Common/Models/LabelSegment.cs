@@ -14,7 +14,7 @@ public struct LabelSegment : IBufferWritable, IBufferReadable, IEquatable<LabelS
         length = (byte) value.Length;
     }
 
-    public void ReadSeq(BufferContext context)
+    public void Read(BufferContext context)
     {
         // TODO: Length safety this, check for null termination.
         if (context.CurrentByte == Label.Pointer)

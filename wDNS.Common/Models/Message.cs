@@ -35,7 +35,7 @@ public struct Message : IBufferWritable, IBufferReadable, IEquatable<Message>
         set => MessageFlagsHelpers.SetFlag(ref flags, MessageFlags.RecursionAvailable_Supported, value);
     }
 
-    public void ReadSeq(BufferContext context)
+    public void Read(BufferContext context)
     {
         id = context.ReadUInt16();
         flags = (MessageFlags)context.ReadUInt16();

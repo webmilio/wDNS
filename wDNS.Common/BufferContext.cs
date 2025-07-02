@@ -35,7 +35,7 @@ public partial class BufferContext : IBufferReadable, IBufferWritable
     public T Read<T>() where T : IBufferReadable, new()
     {
         var item = new T();
-        item.ReadSeq(this);
+        item.Read(this);
 
         return item;
     }
@@ -106,7 +106,7 @@ public partial class BufferContext : IBufferReadable, IBufferWritable
         write.WriteArray(buffer);
     }
 
-    public void ReadSeq(BufferContext context)
+    public void Read(BufferContext context)
     {
         var buffer = context.ReadArray(context.buffer.Length);
         Buffer.BlockCopy(buffer, 0, this.buffer, pointer, buffer.Length);

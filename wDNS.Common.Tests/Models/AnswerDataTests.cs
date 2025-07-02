@@ -57,7 +57,7 @@ public class AnswerDataTests
         ctx.ResetPointer();
 
         var read = new Answer();
-        read.ReadSeq(ctx);
+        read.Read(ctx);
 
         Assert.AreEqual(write, read); // I don't particularly like this since it means we have to update the .Equals()...
     }

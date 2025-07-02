@@ -40,7 +40,7 @@ public class MessageTests
         context.ResetPointer();
 
         var read = new Message();
-        read.ReadSeq(context);
+        read.Read(context);
 
         Assert.AreEqual(write, read);
     }

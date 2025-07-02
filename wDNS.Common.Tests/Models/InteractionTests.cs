@@ -51,7 +51,7 @@ public class InteractionTests
         ctx.ResetPointer();
 
         var read = new Request();
-        read.ReadSeq(ctx);
+        read.Read(ctx);
 
         Assert.AreEqual(write, read);
     }

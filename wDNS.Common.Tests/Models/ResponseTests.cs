@@ -53,7 +53,7 @@ public class ResponseTests
 
         for (int i = 0; i < answers.Length; i++)
         {
-            answers[i].ReadSeq(ctx);
+            answers[i].Read(ctx);
         }
 
         CollectionAssert.DoesNotContain(answers, default);

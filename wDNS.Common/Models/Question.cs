@@ -8,9 +8,9 @@ public struct Question : IBufferWritable, IBufferReadable, IEquatable<Question>
     public RecordTypes types;
     public RecordClasses @class;
 
-    public void ReadSeq(BufferContext context)
+    public void Read(BufferContext context)
     {
-        name.ReadSeq(context);
+        name.Read(context);
 
         types = (RecordTypes)context.ReadUInt16();
         @class = (RecordClasses)context.ReadUInt16();

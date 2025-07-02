@@ -13,7 +13,7 @@ public sealed class LabelTests
         var ctx = BufferContextHelpers.CreateWithLabel(str);
 
         var label = new Label();
-        label.ReadSeq(ctx);
+        label.Read(ctx);
 
         Assert.AreEqual(1, label.segments!.Length);
         Assert.AreEqual(str.Length, label.segments[0].length);
@@ -26,7 +26,7 @@ public sealed class LabelTests
         var ctx = BufferContextHelpers.CreateWithLabel(Constants.Words);
 
         var label = new Label();
-        label.ReadSeq(ctx);
+        label.Read(ctx);
 
         CollectionAssert.AreEqual(Constants.Words, label.segments!.Select(x => x.value).ToArray());
         Assert.AreEqual(Label.Terminator, ctx.CurrentByte);

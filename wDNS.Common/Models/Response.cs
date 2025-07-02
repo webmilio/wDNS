@@ -8,16 +8,16 @@ public struct Response : IBufferReadable, IBufferWritable, IEquatable<Response>
     public Question question;
     public Answer[] data;
 
-    public void ReadSeq(BufferContext context)
+    public void Read(BufferContext context)
     {
-        message.ReadSeq(context);
-        question.ReadSeq(context);
+        message.Read(context);
+        question.Read(context);
 
         data = new Answer[message.answerCount];
 
         for (int i = 0; i < data.Length; i++)
         {
-            data[i].ReadSeq(context);
+            data[i].Read(context);
         }
     }
 

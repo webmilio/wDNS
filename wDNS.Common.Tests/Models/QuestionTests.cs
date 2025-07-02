@@ -40,7 +40,7 @@ public class QuestionTests
         ctx.ResetPointer();
 
         var read = new Question();
-        read.ReadSeq(ctx);
+        read.Read(ctx);
 
         Assert.AreEqual(write, read);
     }
@@ -61,7 +61,7 @@ public class QuestionTests
         ctx.ResetPointer();
 
         var read = new Question();
-        read.ReadSeq(ctx);
+        read.Read(ctx);
 
         Assert.AreEqual(write, read);
     }

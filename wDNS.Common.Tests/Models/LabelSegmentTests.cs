@@ -13,7 +13,7 @@ public class LabelSegmentTests
         var ctx = BufferContextHelpers.CreateWithLabel(str);
 
         var segment = new LabelSegment();
-        segment.ReadSeq(ctx);
+        segment.Read(ctx);
 
         Assert.AreEqual(str.Length, segment.length);
         Assert.AreEqual(str, segment.value);
