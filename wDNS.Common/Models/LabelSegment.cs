@@ -29,7 +29,7 @@ public struct LabelSegment : IBufferWritable, IBufferReadable, IEquatable<LabelS
 
     private void ReadLabel(BufferContext context)
     {
-        var start = context.pointer;
+        /*var start = context.pointer;
         var length = context.ReadByte();
         var max = context.pointer + length;
 
@@ -44,12 +44,12 @@ public struct LabelSegment : IBufferWritable, IBufferReadable, IEquatable<LabelS
         this.length = length;
         value = sb.ToString();
 
-        context.TryAddSegment((byte) start, this);
+        context.TryAddSegment((byte) start, this);*/
     }
 
     private void ReadPointer(BufferContext context)
     {
-        _ = context.ReadByte(); // Move away from the Pointer byte onto the Address byte.
+        /*_ = context.ReadByte(); // Move away from the Pointer byte onto the Address byte.
         var address = context.ReadByte();
 
         if (!context.TryGetSegment(address, out var segment))
@@ -57,12 +57,12 @@ public struct LabelSegment : IBufferWritable, IBufferReadable, IEquatable<LabelS
             throw new IndexOutOfRangeException("Label segment has invalid address.");
         }
 
-        this = segment;
+        this = segment;*/
     }
 
     public readonly void Write(BufferContext context)
     {
-        if (context.TryGetSegmentPointer(value, out var pointer))
+        /*if (context.TryGetSegmentPointer(value, out var pointer))
         {
             context.WriteByte(Label.Pointer);
             context.WriteByte(pointer);
@@ -78,7 +78,7 @@ public struct LabelSegment : IBufferWritable, IBufferReadable, IEquatable<LabelS
             }
 
             context.TryAddSegment(this, start);
-        }
+        }*/
     }
 
     public override readonly string ToString()

@@ -12,6 +12,6 @@ public class LabelHelpersTests
         var label = H.Create(Constants.Words);
 
         Assert.AreEqual(Constants.Words.Length, label.segments.Length);
-        CollectionAssert.AreEqual(Constants.Words, label.segments.Select(x => x.value).ToArray());
+        CollectionAssert.AreEqual(Constants.Words, label.segments);
     }
 }

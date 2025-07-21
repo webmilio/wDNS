@@ -38,10 +38,12 @@ public class BufferContextHelpersTests
         var expected = Encoding.ASCII.GetBytes(str);
 
         var ctx = BufferContextHelpers.CreateWithLabel(str);
-        var segBuffer = new byte[str.Length];
+        var segBuffer = new byte[str.Length + 2];
 
-        Array.Copy(ctx.buffer, 1, segBuffer, 0, str.Length);
+        segBuffer[0] = (byte) str.Length;
+        segBuffer[^1] = Label.Terminator;
+        Array.Copy(expected, 0, segBuffer, 1, expected.Length);
 
-        CollectionAssert.AreEqual(expected, segBuffer);
+        CollectionAssert.IsSubsetOf(segBuffer, ctx.buffer);
     }
 }

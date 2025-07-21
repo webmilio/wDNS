@@ -7,13 +7,6 @@ public interface ILabelConverter : IReadableStringConverter<Label>;
 
 public class LabelConverter : ILabelConverter
 {
-    private readonly IReadableStringConverter<LabelSegment> _segment;
-
-    public LabelConverter(IReadableStringConverter<LabelSegment> segment)
-    {
-        _segment = segment;
-    }
-
     public void AppendReadableString(StringBuilder dst, Label instance, int spacing)
     {
         dst.AppendLineSpaced(spacing, $"Segments: {instance.segments.Length}");
@@ -21,7 +14,7 @@ public class LabelConverter : ILabelConverter
 
         for (int i = 0; i < instance.segments.Length; i++)
         {
-            _segment.AppendReadableString(dst, instance.segments[i], spacing);
+            dst.AppendLineSpaced(spacing, instance.segments[i]);
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
-using System;
 using wDNS.Common.Models;
 
 namespace wDNS.Common;
 
 public partial class BufferContext
 {
-    private readonly Dictionary<byte, LabelSegment> _ptrLabels = [];
+    private readonly Dictionary<byte, Label> _ptrLabels = [];
+
+    /*private readonly Dictionary<byte, LabelSegment> _ptrLabels = [];
     private readonly Dictionary<string, byte> _valuePtr = new(StringComparer.OrdinalIgnoreCase);
 
     public bool TryGetSegment(byte pointer, out LabelSegment segment) => _ptrLabels.TryGetValue(pointer, out segment);
@@ -37,5 +38,5 @@ public partial class BufferContext
         }
 
         return false;
-    }
+    }*/
 }

@@ -23,6 +23,11 @@ public partial class BufferContext : IBufferReadable, IBufferWritable
         this.buffer = buffer;
     }
 
+    public BufferContext(byte[] buffer, int pointer) : this(buffer)
+    {
+        this.pointer = pointer;
+    }
+
     public byte ReadByte() => buffer[pointer++];
     public byte Peek() => pointer >= buffer.Length ? (byte)0 : buffer[pointer + 1];
 

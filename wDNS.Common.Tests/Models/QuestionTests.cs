@@ -32,7 +32,7 @@ public class QuestionTests
 
         var write = new Question
         {
-            name = new Label() { segments = [] },
+            name = new Label(),
             @class = RecordClasses.ANY,
             types = RecordTypes.AVC
         };

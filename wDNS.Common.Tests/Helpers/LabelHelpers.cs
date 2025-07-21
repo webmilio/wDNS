@@ -6,10 +6,7 @@ public static class LabelHelpers
 {
     public static Label Create(params string[] words)
     {
-        var label = new Label
-        {
-            segments = [.. words.Select(x => new LabelSegment(x))]
-        };
+        var label = new Label([..words]);
 
         return label;
     }
