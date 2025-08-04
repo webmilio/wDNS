@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace wDNS.Common.Models;
@@ -8,7 +9,7 @@ namespace wDNS.Common.Models;
 public struct Label : IBufferWritable, IBufferReadable, IEquatable<Label>
 {
     public const int Terminator = 0x00;
-    public const int Pointer = 0b1100_0000;
+    public const ushort Pointer = 0b1100_0000;
 
     public string[] segments;
 
@@ -22,7 +23,55 @@ public struct Label : IBufferWritable, IBufferReadable, IEquatable<Label>
         this.segments = segments;
     }
 
-    public void Read(BufferContext context)
+    public void Read(BufferContext context) => this.segments = [.. ReadLabel(context)];
+
+    private static IList<string> ReadLabel(BufferContext context)
+    {
+        var result = new List<string>();
+        context = GetTargetBuffer(context);
+
+        for (int i = 0; !context.EoB && context.CurrentByte != Terminator; i++)
+        {
+            var segment = ReadSegment(context);
+            result.Add(segment);
+        }
+
+        context.Skip(); // Skip terminator
+
+        return result;
+    }
+
+    private static string ReadSegment(BufferContext context)
+    {
+        // This is a normal label.
+        var length = context.ReadByte();
+        var segment = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++)
+        {
+            segment.Append(context.ReadChar());
+        }
+
+        return segment.ToString();
+    }
+
+    private static bool IsPointer(BufferContext context)
+    {
+        return (context.CurrentByte & Pointer) != 0;
+    }
+
+    private static BufferContext GetTargetBuffer(BufferContext context)
+    {
+        while (IsPointer(context))
+        {
+            var pointer = context.ReadPointer();
+            context = new BufferContext(context.AsBuffer(), pointer);
+        }
+
+        return context;
+    }
+
+    /*public void Read(BufferContext context)
     {
         var segments = new List<string>();
 
@@ -55,21 +104,7 @@ public struct Label : IBufferWritable, IBufferReadable, IEquatable<Label>
                 offset = context.pointer;
             }
         }
-    }
-
-    private static string ReadSegment(BufferContext context)
-    {
-        // This is a normal label.
-        var length = context.ReadByte();
-        var segment = new StringBuilder(length);
-
-        for (int i = 0; i < length && context.CurrentByte != Terminator; i++)
-        {
-            segment.Append(context.ReadChar());
-        }
-
-        return segment.ToString();
-    }
+    }*/
 
     public readonly void Write(BufferContext destination)
     {
@@ -86,47 +121,6 @@ public struct Label : IBufferWritable, IBufferReadable, IEquatable<Label>
         destination.WriteByte(Terminator);
     }
 
-    /*public void Read(BufferContext context)
-    {
-        var segments = new List<LabelSegment>();
-
-        for (;
-            context.pointer < context.buffer.Length &&
-            context.CurrentByte != Terminator;
-        )
-        {
-            var segment = context.Read<LabelSegment>();
-
-            if (segment.length == 0)
-            {
-                // Something went wrong, this shouldn't actually happen ever.
-                // Advance so we don't get stuck in an infinite loop.
-                context.pointer++;
-            }
-            else
-            {
-                segments.Add(segment);
-            }
-        }
-
-        if (context.CurrentByte == Terminator)
-        {
-            context.ReadByte();
-        }
-
-        this.segments = [.. segments];
-    }
-
-    public readonly void Write(BufferContext context)
-    {
-        for (int i = 0; i < segments.Length; i++)
-        {
-            context.Write(segments[i]);
-        }
-
-        context.WriteByte(Terminator);
-    }*/
-
     public override readonly string ToString()
     {
         var sb = new StringBuilder();
@@ -138,25 +132,6 @@ public struct Label : IBufferWritable, IBufferReadable, IEquatable<Label>
         }
 
         return sb.ToString();
-    }
-
-    public static bool TryGetPointer(byte[] array, int offset, out ushort pointer)
-    {
-        const int CounterMask = ~Pointer;
-        pointer = 0;
-
-        if (offset + 1 >= array.Length || (array[offset] & Pointer) != Pointer)
-        {
-            return false;
-        }
-     
-        // This is not super fun because it doesn't use the 'Read' methods that move pointers.
-        // TODO Maybe figure out a safer way to do this.
-        var a = (ushort)(array[offset] & CounterMask) << 8;
-        var b = (ushort)(array[offset + 1]);
-
-        pointer = (ushort)(a | b);
-        return true;
     }
 
     public override readonly bool Equals(object? obj) => obj is Label label && Equals(label);

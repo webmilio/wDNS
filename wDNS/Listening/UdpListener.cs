@@ -12,15 +12,19 @@ public class UdpListener : IUdpListener
 {
     private readonly ILogger<UdpListener> _logger;
     private readonly IOptions<Configuration.Listening> _listOpt;
+    private readonly IOptions<Configuration.SuppressWarnings> _suppressOpt;
     private readonly IRequestProcessor _processor;
 
     public UdpListener(
         ILogger<UdpListener> logger,
         IOptions<Configuration.Listening> listOpt,
+        IOptions<Configuration.SuppressWarnings> suppressOpt,
         IRequestProcessor processor)
     {
         _logger = logger;
         _listOpt = listOpt;
+        _suppressOpt = suppressOpt;
+
         _processor = processor;
     }
 
@@ -38,7 +42,21 @@ public class UdpListener : IUdpListener
 
         while (!cancellation.IsCancellationRequested)
         {
-            var received = await udp.ReceiveAsync(cancellation);
+            UdpReceiveResult received;
+
+            try
+            {
+                received = await udp.ReceiveAsync(cancellation);
+            }
+            catch (SocketException e) when (e.SocketErrorCode == SocketError.ConnectionReset)
+            {
+                if (!_suppressOpt.Value.UDPConnectionReset)
+                {
+                    _logger.LogError("Error while receiving: the remote connection was closed.");
+                }
+                return;
+            }
+
             await ProcessReceived(udp, received);
 
             //await Task.Factory.StartNew(async () => await ProcessReceived(udp, received), cancellation, TaskCreationOptions.LongRunning, TaskScheduler.Current);

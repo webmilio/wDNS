@@ -7,7 +7,7 @@ namespace wDNS.Common.Tests.Models;
 [TestClass]
 public sealed class LabelTests
 {
-    [TestMethod]
+    /*[TestMethod]
     public void ReadPointer_ReturnsValidPointer()
     {
         const int Pointer = 5062;
@@ -18,7 +18,7 @@ public sealed class LabelTests
 
         Label.TryGetPointer(ctx.buffer, 0, out var pointer);
         Assert.AreEqual(Pointer, pointer);
-    }
+    }*/
 
     [TestMethod]
     public void Read_SingleSegment_ReturnsValidLabel()

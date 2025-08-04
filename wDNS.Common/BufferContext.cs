@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using wDNS.Common.Models;
 
 namespace wDNS.Common;
 
@@ -55,6 +56,14 @@ public partial class BufferContext : IBufferReadable, IBufferWritable
         return x;
     }
 
+    public ushort ReadPointer()
+    {
+        var x = (ushort)((ReadByte() & ~Label.Pointer) << 8);
+        x |= ReadByte();
+
+        return x;
+    }
+
     public void WriteUInt16(ushort value)
     {
         WriteByte((byte)(value >> 8));
@@ -94,7 +103,7 @@ public partial class BufferContext : IBufferReadable, IBufferWritable
         pointer += data.Length;
     }
 
-    public byte[] ToBuffer()
+    public byte[] AsBuffer()
     {
         var buffer = new byte[pointer];
         Buffer.BlockCopy(this.buffer, 0, buffer, 0, buffer.Length);
@@ -105,6 +114,8 @@ public partial class BufferContext : IBufferReadable, IBufferWritable
     public void ResetPointer() => pointer = 0;
 
     public void MovePointer(int offset) => pointer += offset;
+
+    public void Skip() => MovePointer(1);
 
     public void Write(BufferContext write)
     {

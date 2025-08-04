@@ -6,7 +6,78 @@ namespace wDNS.Common.Tests.Models;
 [TestClass]
 public class ResponseTests
 {
-    private static readonly byte[] ValidGoogleResponse_ExampleCom = [148, 99, 129, 128, 0, 1, 0, 6, 0, 0, 0, 0, 7, 101, 120, 97, 109, 112, 108, 101, 3, 99, 111, 109, 0, 0, 1, 0, 1, 192, 12, 0, 1, 0, 1, 0, 0, 0, 57, 0, 4, 23, 215, 0, 136, 192, 12, 0, 1, 0, 1, 0, 0, 0, 57, 0, 4, 23, 215, 0, 138, 192, 12, 0, 1, 0, 1, 0, 0, 0, 57, 0, 4, 23, 192, 228, 80, 192, 12, 0, 1, 0, 1, 0, 0, 0, 57, 0, 4, 23, 192, 228, 84, 192, 12, 0, 1, 0, 1, 0, 0, 0, 57, 0, 4, 96, 7, 128, 198, 192, 12, 0, 1, 0, 1, 0, 0, 0, 57, 0, 4, 96, 7, 128, 175];
+    private static readonly byte[] ValidGoogleResponse_ExampleCom = [
+        // Message
+        148, 99, // Id = 37987
+        129, 128, // Flags = 32896, 1000_0000_1000_0000 - Response, Supported, 
+        0, 1, // Question Count = 1
+        0, 6, // Answer Count = 6
+        0, 0, // Authority Count
+        0, 0, // Additional Count
+
+        // Question - idx 12
+        7, // Label length = 7
+        101, // e
+        120, // x
+        97, // a
+        109, // m
+        112, // p
+        108, // l
+        101, // e
+        3, // Label length = 3
+        99, // c
+        111, // o
+        109, // m
+        0, // Label terminator
+
+        // idx 25
+        0, 1, // Record Type = A
+        0, 1, // Record Class = IN
+
+        // Answer - idx 29
+        192, 12, // Pointer = 12
+        0, 1, // Record Type = A
+        0, 1, // Record Class = IN
+        0, 0, 0, 57, // Time to live = 57
+        0, 4, // RDLENGTH = 4
+        23, 215, 0, 136, // RDATA = 23.215.0.136
+
+        // idx 46
+        192, 12, // Pointer = 12
+        0, 1, // Record Type = A
+        0, 1, // Record Class = IN
+        0, 0, 0, 57, // Time to live = 57
+        0, 4, // RDLENGTH = 4
+        23, 215, 0, 138, // RDATA = 23.215.0.138
+
+        192, 12, // Pointer = 12
+        0, 1, // Record Type = A
+        0, 1, // Record Class = IN
+        0, 0, 0, 57, // Time to live = 57
+        0, 4, // RDLENGTH = 4
+        23, 192, 228, 80, // RDATA = 23.192.228.80
+
+        192, 12, // Pointer = 12
+        0, 1, // Record Type = A
+        0, 1, // Record Class = IN
+        0, 0, 0, 57, // Time to live = 57
+        0, 4, // RDLENGTH = 4
+        23, 192, 228, 84, // RDATA = 23.192.228.80
+        
+        192, 12, // Pointer = 12
+        0, 1, // Record Type = A
+        0, 1, // Record Class = IN
+        0, 0, 0, 57, // Time to live = 57
+        0, 4, // RDLENGTH = 4
+        96, 7, 128, 198, // RDATA = 96.7.128.198
+
+        192, 12, // Pointer = 12
+        0, 1, // Record Type = A
+        0, 1, // Record Class = IN
+        0, 0, 0, 57, // Time to live = 57
+        0, 4, // RDLENGTH = 4
+        96, 7, 128, 175 // RDATA = 96.7.128.175
+    ];
 
     [TestMethod]
     public void DeserializedValidGoogleResponse_ReturnsValid()
@@ -14,7 +85,7 @@ public class ResponseTests
         var ctx = new BufferContext(ValidGoogleResponse_ExampleCom);
         var response = ctx.Read<Response>();
 
-        ;
+        Assert.IsNotNull(response);
     }
 
     [TestMethod]
@@ -27,6 +98,7 @@ public class ResponseTests
         Assert.AreNotEqual(0, (ushort) message.flags);
         Assert.AreEqual(1, message.questionCount);
         Assert.AreNotEqual(0, message.answerCount);
+        Assert.AreEqual(12, ctx.pointer);
     }
 
     [TestMethod]
@@ -40,6 +112,7 @@ public class ResponseTests
         Assert.AreEqual(2, question.name.segments.Length);
         Assert.AreEqual(RecordTypes.A, question.types);
         Assert.AreEqual(RecordClasses.IN, question.@class);
+        Assert.AreEqual(29, ctx.pointer);
     }
 
     [TestMethod]

@@ -8,6 +8,12 @@ public class ResponseConverter : IReadableStringConverter<Response>
     private readonly IReadableStringConverter<Question> _question;
     private readonly IReadableStringConverter<Answer> _answer;
 
+    public ResponseConverter(IReadableStringConverter<Question> question, IReadableStringConverter<Answer> answer)
+    {
+        _question = question;
+        _answer = answer;
+    }
+
     public void AppendReadableString(StringBuilder dst, Response instance, int spacing)
     {
         _question.AppendReadableString(dst, instance.question, spacing);

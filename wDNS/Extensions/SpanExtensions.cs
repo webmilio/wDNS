@@ -24,6 +24,6 @@ public static class SpanExtensions
         var ctx = BufferContext.CreateUdpContext();
         ctx.Write(writable);
 
-        return ctx.ToBuffer();
+        return ctx.AsBuffer();
     }
 }
