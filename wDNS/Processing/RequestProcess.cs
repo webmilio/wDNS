@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using System.Net.Sockets;
 using wDNS.Common;
 using wDNS.Common.Models;
 using wDNS.Conversion.Readable;

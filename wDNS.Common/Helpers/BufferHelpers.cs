@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace wDNS.Common.Helpers;
+﻿namespace wDNS.Common.Helpers;
 
 public static class BufferHelpers
 {

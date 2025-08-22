@@ -1,5 +1,4 @@
-﻿using System.Threading.Channels;
-using wDNS.Common;
+﻿using wDNS.Common;
 using wDNS.Common.Models;
 
 namespace wDNS.Forwarding;

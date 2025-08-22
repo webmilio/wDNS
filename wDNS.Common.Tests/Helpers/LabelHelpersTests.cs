@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using H = wDNS.Common.Tests.Helpers.LabelHelpers;
+﻿using H = wDNS.Common.Tests.Helpers.LabelHelpers;
 
 namespace wDNS.Common.Tests.Helpers;
 

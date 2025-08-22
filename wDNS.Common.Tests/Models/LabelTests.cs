@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using wDNS.Common.Models;
+﻿using wDNS.Common.Models;
 using wDNS.Common.Tests.Helpers;
 
 namespace wDNS.Common.Tests.Models;
